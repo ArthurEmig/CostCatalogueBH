@@ -17,6 +17,9 @@
             <TextBlock VerticalAlignment="Center" Text="Project Types:" Margin="8,0,4,0"/>
             <!-- TODO: Add selectability like in Excel -->
             <ListBox Width="250" Height="80" ItemsSource="{Binding AllProjectTypes}" SelectionMode="Extended" local:SelectedItemsBehavior.SelectedItems="{Binding SelectedProjectTypes}"/>
+            <ComboBox Width="120" Margin="4,0,0,0"
+                      ItemsSource="{Binding ProjectTypeMatchModes}"
+                      SelectedItem="{Binding ProjectTypeMatchMode, Mode=TwoWay}"/>
             <Button Content="Apply Filter" Command="{Binding ApplyFilterCommand}" Margin="8,0,0,0"/>
             <Button Content="Reset" Command="{Binding ResetFilterCommand}" Margin="4,0,0,0"/>
             <Separator/>

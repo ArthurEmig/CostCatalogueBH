@@ -12,6 +12,12 @@ using CostsViewer.Services;
 
 namespace CostsViewer.ViewModels
 {
+    public enum ProjectTypeMatchMode
+    {
+        Any,
+        All
+    }
+
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly ObservableCollection<ProjectRecord> _projects = new();
@@ -19,6 +25,14 @@ namespace CostsViewer.ViewModels
 
         public ObservableCollection<string> AllProjectTypes { get; } = new();
         public IList<object> SelectedProjectTypes { get; } = new ObservableCollection<object>();
+        public Array ProjectTypeMatchModes => Enum.GetValues(typeof(ProjectTypeMatchMode));
+
+        private ProjectTypeMatchMode _projectTypeMatchMode = ProjectTypeMatchMode.Any;
+        public ProjectTypeMatchMode ProjectTypeMatchMode
+        {
+            get => _projectTypeMatchMode;
+            set { _projectTypeMatchMode = value; OnPropertyChanged(); RefreshView(); }
+        }
 
         private int? _minArea;
         public int? MinArea { get => _minArea; set { _minArea = value; OnPropertyChanged(); RefreshView(); } }
@@ -143,8 +157,16 @@ namespace CostsViewer.ViewModels
             if (MaxArea.HasValue && p.TotalArea > MaxArea.Value) return false;
             if (SelectedProjectTypes.Count > 0)
             {
-                var set = SelectedProjectTypes.Cast<string>().ToHashSet();
-                if (!p.ProjectTypes.Any(set.Contains)) return false;
+                var selected = SelectedProjectTypes.Cast<string>().ToList();
+                if (ProjectTypeMatchMode == ProjectTypeMatchMode.All)
+                {
+                    var projectTypeSet = p.ProjectTypes.ToHashSet();
+                    if (!selected.All(projectTypeSet.Contains)) return false;
+                }
+                else
+                {
+                    if (!p.ProjectTypes.Any(t => selected.Contains(t))) return false;
+                }
             }
             return true;
         }
@@ -154,6 +176,7 @@ namespace CostsViewer.ViewModels
             MinArea = null;
             MaxArea = null;
             SelectedProjectTypes.Clear();
+            ProjectTypeMatchMode = ProjectTypeMatchMode.Any;
             RefreshView();
         }
 
