@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -38,6 +39,13 @@ namespace CostsViewer.ViewModels
             ProjectsView = CollectionViewSource.GetDefaultView(_projects);
             ProjectsView.Filter = FilterProject;
 
+            _projects.CollectionChanged += OnProjectsCollectionChanged;
+
+            if (SelectedProjectTypes is INotifyCollectionChanged selectedTypesChanges)
+            {
+                selectedTypesChanges.CollectionChanged += (_, __) => RefreshView();
+            }
+
             LoadCsvCommand = new RelayCommand(_ => LoadCsv());
             ApplyFilterCommand = new RelayCommand(_ => RefreshView());
             ResetFilterCommand = new RelayCommand(_ => ResetFilters());
@@ -47,13 +55,70 @@ namespace CostsViewer.ViewModels
             ExportPdfCommand = new RelayCommand(_ => ExportPdf());
         }
 
+        private void OnProjectsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                foreach (var rec in _projects)
+                {
+                    rec.PropertyChanged -= OnProjectPropertyChanged;
+                    rec.PropertyChanged += OnProjectPropertyChanged;
+                }
+                UpdateAverages();
+                OnPropertyChanged(nameof(IncludedCount));
+                return;
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (var item in e.OldItems)
+                {
+                    if (item is ProjectRecord oldRec)
+                    {
+                        oldRec.PropertyChanged -= OnProjectPropertyChanged;
+                    }
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    if (item is ProjectRecord newRec)
+                    {
+                        newRec.PropertyChanged += OnProjectPropertyChanged;
+                    }
+                }
+            }
+            UpdateAverages();
+            OnPropertyChanged(nameof(IncludedCount));
+        }
+
+        private void OnProjectPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ProjectRecord.Include))
+            {
+                UpdateAverages();
+                OnPropertyChanged(nameof(IncludedCount));
+            }
+        }
+
         private void LoadCsv()
         {
             try
             {
-                var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "..", "2025-08-25_Sample_Table_Costs.csv");
-                var fullPath = System.IO.Path.GetFullPath(path);
-                var items = CsvLoader.Load(fullPath);
+                var dlg = new Microsoft.Win32.OpenFileDialog
+                {
+                    Title = "Select costs CSV",
+                    Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
+                    CheckFileExists = true,
+                    Multiselect = false
+                };
+
+                var result = dlg.ShowDialog();
+                if (result != true) return;
+
+                var items = CsvLoader.Load(dlg.FileName);
                 _projects.Clear();
                 foreach (var it in items) _projects.Add(it);
                 RebuildProjectTypes();
@@ -94,15 +159,16 @@ namespace CostsViewer.ViewModels
 
         private void SetIncludeForMatches(bool include)
         {
-            foreach (var obj in _projects.Where(p => FilterProject(p)))
+            foreach (var obj in ProjectsView.Cast<ProjectRecord>())
                 obj.Include = include;
             UpdateAverages();
             OnPropertyChanged(nameof(IncludedCount));
         }
 
-        private IEnumerable<ProjectRecord> Included => _projects.Where(p => p.Include);
+        private IEnumerable<ProjectRecord> FilteredItems => ProjectsView.Cast<ProjectRecord>();
+        private IEnumerable<ProjectRecord> FilteredIncluded => FilteredItems.Where(p => p.Include);
 
-        public int IncludedCount => Included.Count();
+        public int IncludedCount => FilteredIncluded.Count();
 
         private double _averageArea;
         public double AverageArea { get => _averageArea; private set { _averageArea = value; OnPropertyChanged(); } }
@@ -119,7 +185,7 @@ namespace CostsViewer.ViewModels
 
         private void UpdateAverages()
         {
-            var list = Included.ToList();
+            var list = FilteredIncluded.ToList();
             if (list.Count == 0)
             {
                 AverageArea = 0;
@@ -154,6 +220,18 @@ namespace CostsViewer.ViewModels
 
         private void RefreshView()
         {
+            if (ProjectsView is IEditableCollectionView editable)
+            {
+                if (editable.IsAddingNew)
+                {
+                    try { editable.CommitNew(); } catch { }
+                }
+                if (editable.IsEditingItem)
+                {
+                    try { editable.CommitEdit(); } catch { }
+                }
+            }
+
             ProjectsView.Refresh();
             UpdateAverages();
             OnPropertyChanged(nameof(IncludedCount));
@@ -161,12 +239,12 @@ namespace CostsViewer.ViewModels
 
         private void ExportExcel()
         {
-            try { ExportServices.ExcelExporter.Export(Included.ToList()); } catch { }
+            try { ExportServices.ExcelExporter.Export(FilteredIncluded.ToList()); } catch { }
         }
 
         private void ExportPdf()
         {
-            try { ExportServices.PdfExporter.Export(Included.ToList(), AverageArea, AverageKG220, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG480, AverageKG550); } catch { }
+            try { ExportServices.PdfExporter.Export(FilteredIncluded.ToList(), AverageArea, AverageKG220, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG480, AverageKG550); } catch { }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
