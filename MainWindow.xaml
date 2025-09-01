@@ -1,0 +1,93 @@
+<Window x:Class="CostsViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CostsViewer"
+        mc:Ignorable="d"
+        Title="Costs Viewer" Height="720" Width="1200">
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <Button Content="Load CSV" Command="{Binding LoadCsvCommand}" Margin="0,0,8,0"/>
+            <Separator/>
+            <TextBlock VerticalAlignment="Center" Text="Min Area:" Margin="8,0,4,0"/>
+            <TextBox Width="100" Text="{Binding MinArea, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock VerticalAlignment="Center" Text="Max Area:" Margin="8,0,4,0"/>
+            <TextBox Width="100" Text="{Binding MaxArea, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock VerticalAlignment="Center" Text="Project Types:" Margin="8,0,4,0"/>
+            <ListBox Width="250" Height="80" ItemsSource="{Binding AllProjectTypes}" SelectionMode="Extended" local:SelectedItemsBehavior.SelectedItems="{Binding SelectedProjectTypes}"/>
+            <Button Content="Apply Filter" Command="{Binding ApplyFilterCommand}" Margin="8,0,0,0"/>
+            <Button Content="Reset" Command="{Binding ResetFilterCommand}" Margin="4,0,0,0"/>
+            <Separator/>
+            <Button Content="Include Matches" Command="{Binding IncludeMatchesCommand}" Margin="8,0,0,0"/>
+            <Button Content="Exclude Matches" Command="{Binding ExcludeMatchesCommand}" Margin="4,0,0,0"/>
+            <Separator/>
+            <Button Content="Export Excel" Command="{Binding ExportExcelCommand}" Margin="8,0,0,0"/>
+            <Button Content="Export PDF" Command="{Binding ExportPdfCommand}" Margin="4,0,0,0"/>
+        </ToolBar>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="320"/>
+            </Grid.ColumnDefinitions>
+
+            <DataGrid Grid.Column="0"
+                      ItemsSource="{Binding ProjectsView}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="False"
+                      CanUserAddRows="False"
+                      SelectionMode="Extended"
+                      Margin="8">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="70"/>
+                    <DataGridTextColumn Header="Project ID" Binding="{Binding ProjectId}" Width="120"/>
+                    <DataGridTextColumn Header="Title" Binding="{Binding ProjectTitle}" Width="200"/>
+                    <DataGridTextColumn Header="Types" Binding="{Binding ProjectTypesDisplay}" Width="200"/>
+                    <DataGridTextColumn Header="Area (sqm)" Binding="{Binding TotalArea}" Width="100"/>
+                    <DataGridTextColumn Header="KG220 €/sqm" Binding="{Binding CostPerSqmKG220}" Width="100"/>
+                    <DataGridTextColumn Header="KG410 €/sqm" Binding="{Binding CostPerSqmKG410}" Width="100"/>
+                    <DataGridTextColumn Header="KG420 €/sqm" Binding="{Binding CostPerSqmKG420}" Width="100"/>
+                    <DataGridTextColumn Header="KG430 €/sqm" Binding="{Binding CostPerSqmKG430}" Width="100"/>
+                    <DataGridTextColumn Header="KG434 €/sqm" Binding="{Binding CostPerSqmKG434}" Width="100"/>
+                    <DataGridTextColumn Header="KG440 €/sqm" Binding="{Binding CostPerSqmKG440}" Width="100"/>
+                    <DataGridTextColumn Header="KG450 €/sqm" Binding="{Binding CostPerSqmKG450}" Width="100"/>
+                    <DataGridTextColumn Header="KG460 €/sqm" Binding="{Binding CostPerSqmKG460}" Width="100"/>
+                    <DataGridTextColumn Header="KG480 €/sqm" Binding="{Binding CostPerSqmKG480}" Width="100"/>
+                    <DataGridTextColumn Header="KG550 €/sqm" Binding="{Binding CostPerSqmKG550}" Width="100"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <StackPanel Grid.Column="1" Margin="8" Orientation="Vertical">
+                <TextBlock Text="Included Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                <UniformGrid Columns="2" Rows="9" Margin="0,0,0,8">
+                    <TextBlock Text="Count:"/>
+                    <TextBlock Text="{Binding IncludedCount}"/>
+                    <TextBlock Text="Area Avg:"/>
+                    <TextBlock Text="{Binding AverageArea}"/>
+                    <TextBlock Text="KG220 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG220}"/>
+                    <TextBlock Text="KG410 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG410}"/>
+                    <TextBlock Text="KG420 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG420}"/>
+                    <TextBlock Text="KG430 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG430}"/>
+                    <TextBlock Text="KG434 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG434}"/>
+                    <TextBlock Text="KG440 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG440}"/>
+                    <TextBlock Text="KG450 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG450}"/>
+                    <TextBlock Text="KG460 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG460}"/>
+                    <TextBlock Text="KG480 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG480}"/>
+                    <TextBlock Text="KG550 €/sqm:"/>
+                    <TextBlock Text="{Binding AverageKG550}"/>
+                </UniformGrid>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>
+
