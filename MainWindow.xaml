@@ -68,27 +68,27 @@
                     <TextBlock Text="Count:"/>
                     <TextBlock Text="{Binding IncludedCount}"/>
                     <TextBlock Text="Area Avg:"/>
-                    <TextBlock Text="{Binding AverageArea}"/>
+                    <TextBlock Text="{Binding AverageArea, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG220 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG220}"/>
+                    <TextBlock Text="{Binding AverageKG220, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG410 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG410}"/>
+                    <TextBlock Text="{Binding AverageKG410, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG420 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG420}"/>
+                    <TextBlock Text="{Binding AverageKG420, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG430 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG430}"/>
+                    <TextBlock Text="{Binding AverageKG430, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG434 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG434}"/>
+                    <TextBlock Text="{Binding AverageKG434, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG440 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG440}"/>
+                    <TextBlock Text="{Binding AverageKG440, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG450 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG450}"/>
+                    <TextBlock Text="{Binding AverageKG450, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG460 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG460}"/>
+                    <TextBlock Text="{Binding AverageKG460, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG480 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG480}"/>
+                    <TextBlock Text="{Binding AverageKG480, StringFormat={}{0:F2}}"/>
                     <TextBlock Text="KG550 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG550}"/>
+                    <TextBlock Text="{Binding AverageKG550, StringFormat={}{0:F2}}"/>
                 </UniformGrid>
             </StackPanel>
         </Grid>

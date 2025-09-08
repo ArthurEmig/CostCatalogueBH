@@ -146,6 +146,7 @@ namespace CostsViewer.ViewModels
         private void RebuildProjectTypes()
         {
             AllProjectTypes.Clear();
+            AllProjectTypes.Add("All types");
             foreach (var t in _projects.SelectMany(p => p.ProjectTypes).Distinct().OrderBy(s => s))
                 AllProjectTypes.Add(t);
         }
@@ -158,14 +159,18 @@ namespace CostsViewer.ViewModels
             if (SelectedProjectTypes.Count > 0)
             {
                 var selected = SelectedProjectTypes.Cast<string>().ToList();
-                if (ProjectTypeMatchMode == ProjectTypeMatchMode.All)
+                // If "All types" is selected, skip project type filtering
+                if (!selected.Contains("All types"))
                 {
-                    var projectTypeSet = p.ProjectTypes.ToHashSet();
-                    if (!selected.All(projectTypeSet.Contains)) return false;
-                }
-                else
-                {
-                    if (!p.ProjectTypes.Any(t => selected.Contains(t))) return false;
+                    if (ProjectTypeMatchMode == ProjectTypeMatchMode.All)
+                    {
+                        var projectTypeSet = p.ProjectTypes.ToHashSet();
+                        if (!selected.All(projectTypeSet.Contains)) return false;
+                    }
+                    else
+                    {
+                        if (!p.ProjectTypes.Any(t => selected.Contains(t))) return false;
+                    }
                 }
             }
             return true;
