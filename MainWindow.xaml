@@ -62,35 +62,61 @@
                 </DataGrid.Columns>
             </DataGrid>
 
-            <StackPanel Grid.Column="1" Margin="8" Orientation="Vertical">
-                <TextBlock Text="Included Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
-                <UniformGrid Columns="2" Rows="9" Margin="0,0,0,8">
-                    <TextBlock Text="Count:"/>
-                    <TextBlock Text="{Binding IncludedCount}"/>
-                    <TextBlock Text="Area Avg:"/>
-                    <TextBlock Text="{Binding AverageArea, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG220 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG220, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG410 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG410, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG420 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG420, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG430 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG430, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG434 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG434, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG440 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG440, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG450 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG450, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG460 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG460, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG480 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG480, StringFormat={}{0:F2}}"/>
-                    <TextBlock Text="KG550 €/sqm:"/>
-                    <TextBlock Text="{Binding AverageKG550, StringFormat={}{0:F2}}"/>
-                </UniformGrid>
-            </StackPanel>
+            <TabControl Grid.Column="1" Margin="8">
+                <TabItem Header="Averages">
+                    <StackPanel Orientation="Vertical" Margin="8">
+                        <TextBlock Text="Included Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                        <UniformGrid Columns="2" Rows="9" Margin="0,0,0,8">
+                            <TextBlock Text="Count:"/>
+                            <TextBlock Text="{Binding IncludedCount}"/>
+                            <TextBlock Text="Area Avg:"/>
+                            <TextBlock Text="{Binding AverageArea, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG220 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG220, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG410 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG410, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG420 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG420, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG430 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG430, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG434 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG434, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG440 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG440, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG450 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG450, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG460 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG460, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG480 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG480, StringFormat={}{0:F2}}"/>
+                            <TextBlock Text="KG550 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG550, StringFormat={}{0:F2}}"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Summary">
+                    <ScrollViewer>
+                        <StackPanel Orientation="Vertical" Margin="8">
+                            <TextBlock Text="Cost Group Summary (DIN 276)" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                            <DataGrid ItemsSource="{Binding CostGroupSummary}" 
+                                      AutoGenerateColumns="False" 
+                                      IsReadOnly="True" 
+                                      CanUserAddRows="False"
+                                      GridLinesVisibility="All"
+                                      HeadersVisibility="All">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Cost Group" Binding="{Binding CostGroup}" Width="100"/>
+                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="150"/>
+                                    <DataGridTextColumn Header="Average €/sqm" Binding="{Binding AverageCost, StringFormat={}{0:F2}}" Width="120"/>
+                                    <DataGridTextColumn Header="Min €/sqm" Binding="{Binding MinCost, StringFormat={}{0:F2}}" Width="100"/>
+                                    <DataGridTextColumn Header="Max €/sqm" Binding="{Binding MaxCost, StringFormat={}{0:F2}}" Width="100"/>
+                                    <DataGridTextColumn Header="Std Dev" Binding="{Binding StandardDeviation, StringFormat={}{0:F2}}" Width="80"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
         </Grid>
     </DockPanel>
 </Window>

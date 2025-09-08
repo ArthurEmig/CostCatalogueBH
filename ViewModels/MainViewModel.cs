@@ -26,6 +26,7 @@ namespace CostsViewer.ViewModels
         public ObservableCollection<string> AllProjectTypes { get; } = new();
         public IList<object> SelectedProjectTypes { get; } = new ObservableCollection<object>();
         public Array ProjectTypeMatchModes => Enum.GetValues(typeof(ProjectTypeMatchMode));
+        public ObservableCollection<CostGroupSummary> CostGroupSummary { get; } = new();
 
         private ProjectTypeMatchMode _projectTypeMatchMode = ProjectTypeMatchMode.Any;
         public ProjectTypeMatchMode ProjectTypeMatchMode
@@ -359,7 +360,80 @@ namespace CostsViewer.ViewModels
             OnPropertyChanged(nameof(AverageKG460));
             OnPropertyChanged(nameof(AverageKG480));
             OnPropertyChanged(nameof(AverageKG550));
+            
+            UpdateCostGroupSummary();
             Console.WriteLine("UpdateAverages: Completed calculation and property notifications");
+        }
+
+        private void UpdateCostGroupSummary()
+        {
+            Console.WriteLine("=== UpdateCostGroupSummary: Starting summary calculation ===");
+            var includedItems = FilteredIncluded.ToList();
+            Console.WriteLine($"UpdateCostGroupSummary: Using {includedItems.Count} included items");
+
+            CostGroupSummary.Clear();
+
+            if (includedItems.Count == 0)
+            {
+                Console.WriteLine("UpdateCostGroupSummary: No items to summarize");
+                return;
+            }
+
+            // Define cost groups with descriptions according to DIN 276
+            var costGroups = new[]
+            {
+                new { Code = "KG220", Description = "Site Clearance & Preparation", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG220) },
+                new { Code = "KG410", Description = "Sewage, Water & Gas Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG410) },
+                new { Code = "KG420", Description = "Heating Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG420) },
+                new { Code = "KG430", Description = "Ventilation & Air Conditioning", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG430) },
+                new { Code = "KG434", Description = "Process-Specific Installations", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG434) },
+                new { Code = "KG440", Description = "Electrical Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG440) },
+                new { Code = "KG450", Description = "Communication & Safety Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG450) },
+                new { Code = "KG460", Description = "Conveying Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG460) },
+                new { Code = "KG480", Description = "Building & System Automation", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG480) },
+                new { Code = "KG550", Description = "Outdoor Technical Installations", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG550) }
+            };
+
+            foreach (var costGroup in costGroups)
+            {
+                var values = includedItems.Select(costGroup.GetValue).Where(v => v > 0).ToList();
+                
+                if (values.Count > 0)
+                {
+                    var average = values.Average();
+                    var min = values.Min();
+                    var max = values.Max();
+                    var standardDeviation = CalculateStandardDeviation(values, average);
+
+                    var summary = new CostGroupSummary
+                    {
+                        CostGroup = costGroup.Code,
+                        Description = costGroup.Description,
+                        AverageCost = average,
+                        MinCost = min,
+                        MaxCost = max,
+                        StandardDeviation = standardDeviation
+                    };
+
+                    CostGroupSummary.Add(summary);
+                    Console.WriteLine($"UpdateCostGroupSummary: {costGroup.Code} - Avg: {average:F2}, Min: {min:F2}, Max: {max:F2}, StdDev: {standardDeviation:F2}");
+                }
+                else
+                {
+                    Console.WriteLine($"UpdateCostGroupSummary: {costGroup.Code} - No valid data (all zeros)");
+                }
+            }
+
+            Console.WriteLine($"UpdateCostGroupSummary: Created {CostGroupSummary.Count} cost group summaries");
+        }
+
+        private static double CalculateStandardDeviation(List<double> values, double mean)
+        {
+            if (values.Count <= 1) return 0;
+
+            var sumOfSquaredDifferences = values.Sum(v => Math.Pow(v - mean, 2));
+            var variance = sumOfSquaredDifferences / (values.Count - 1); // Sample standard deviation
+            return Math.Sqrt(variance);
         }
 
         private void RefreshView()
@@ -391,8 +465,9 @@ namespace CostsViewer.ViewModels
             try 
             { 
                 var exportItems = FilteredIncluded.ToList();
-                Console.WriteLine($"ExportExcel: Exporting {exportItems.Count} included items to Excel");
-                ExportServices.ExcelExporter.Export(exportItems);
+                var summaryItems = CostGroupSummary.ToList();
+                Console.WriteLine($"ExportExcel: Exporting {exportItems.Count} included items and {summaryItems.Count} cost group summaries to Excel");
+                ExportServices.ExcelExporter.Export(exportItems, summaryItems);
                 Console.WriteLine("ExportExcel: Excel export completed successfully");
             } 
             catch (Exception ex)
@@ -406,9 +481,10 @@ namespace CostsViewer.ViewModels
             try 
             { 
                 var exportItems = FilteredIncluded.ToList();
-                Console.WriteLine($"ExportPdf: Exporting {exportItems.Count} included items to PDF");
+                var summaryItems = CostGroupSummary.ToList();
+                Console.WriteLine($"ExportPdf: Exporting {exportItems.Count} included items and {summaryItems.Count} cost group summaries to PDF");
                 Console.WriteLine($"ExportPdf: Using averages - Area: {AverageArea:F2}, KG220: {AverageKG220:F2}");
-                ExportServices.PdfExporter.Export(exportItems, AverageArea, AverageKG220, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG480, AverageKG550);
+                ExportServices.PdfExporter.Export(exportItems, summaryItems, AverageArea, AverageKG220, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG480, AverageKG550);
                 Console.WriteLine("ExportPdf: PDF export completed successfully");
             } 
             catch (Exception ex)
