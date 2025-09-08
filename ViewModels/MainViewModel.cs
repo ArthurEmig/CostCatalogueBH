@@ -31,14 +31,40 @@ namespace CostsViewer.ViewModels
         public ProjectTypeMatchMode ProjectTypeMatchMode
         {
             get => _projectTypeMatchMode;
-            set { _projectTypeMatchMode = value; OnPropertyChanged(); RefreshView(); }
+            set 
+            { 
+                Console.WriteLine($"ProjectTypeMatchMode: Changed from {_projectTypeMatchMode} to {value}");
+                _projectTypeMatchMode = value; 
+                OnPropertyChanged(); 
+                RefreshView(); 
+            }
         }
 
         private int? _minArea;
-        public int? MinArea { get => _minArea; set { _minArea = value; OnPropertyChanged(); RefreshView(); } }
+        public int? MinArea 
+        { 
+            get => _minArea; 
+            set 
+            { 
+                Console.WriteLine($"MinArea: Changed from {_minArea} to {value}");
+                _minArea = value; 
+                OnPropertyChanged(); 
+                RefreshView(); 
+            } 
+        }
 
         private int? _maxArea;
-        public int? MaxArea { get => _maxArea; set { _maxArea = value; OnPropertyChanged(); RefreshView(); } }
+        public int? MaxArea 
+        { 
+            get => _maxArea; 
+            set 
+            { 
+                Console.WriteLine($"MaxArea: Changed from {_maxArea} to {value}");
+                _maxArea = value; 
+                OnPropertyChanged(); 
+                RefreshView(); 
+            } 
+        }
 
         public ICommand LoadCsvCommand { get; }
         public ICommand ApplyFilterCommand { get; }
@@ -50,14 +76,18 @@ namespace CostsViewer.ViewModels
 
         public MainViewModel()
         {
+            Console.WriteLine("=== MainViewModel: Constructor starting ===");
             ProjectsView = CollectionViewSource.GetDefaultView(_projects);
             ProjectsView.Filter = FilterProject;
+            Console.WriteLine("MainViewModel: ProjectsView created and filter set");
 
             _projects.CollectionChanged += OnProjectsCollectionChanged;
+            Console.WriteLine("MainViewModel: Projects collection change handler attached");
 
             if (SelectedProjectTypes is INotifyCollectionChanged selectedTypesChanges)
             {
                 selectedTypesChanges.CollectionChanged += (_, __) => RefreshView();
+                Console.WriteLine("MainViewModel: SelectedProjectTypes change handler attached");
             }
 
             LoadCsvCommand = new RelayCommand(_ => LoadCsv());
@@ -67,6 +97,8 @@ namespace CostsViewer.ViewModels
             ExcludeMatchesCommand = new RelayCommand(_ => SetIncludeForMatches(false));
             ExportExcelCommand = new RelayCommand(_ => ExportExcel());
             ExportPdfCommand = new RelayCommand(_ => ExportPdf());
+            Console.WriteLine("MainViewModel: All commands initialized");
+            Console.WriteLine("=== MainViewModel: Constructor completed ===");
         }
 
         private void OnProjectsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -112,6 +144,8 @@ namespace CostsViewer.ViewModels
         {
             if (e.PropertyName == nameof(ProjectRecord.Include))
             {
+                var project = sender as ProjectRecord;
+                Console.WriteLine($"OnProjectPropertyChanged: Project {project?.ProjectId} Include changed to {project?.Include}");
                 UpdateAverages();
                 OnPropertyChanged(nameof(IncludedCount));
             }
@@ -121,6 +155,7 @@ namespace CostsViewer.ViewModels
         {
             try
             {
+                Console.WriteLine("=== LoadCsv: Starting CSV load process ===");
                 var dlg = new Microsoft.Win32.OpenFileDialog
                 {
                     Title = "Select costs CSV",
@@ -130,67 +165,135 @@ namespace CostsViewer.ViewModels
                 };
 
                 var result = dlg.ShowDialog();
-                if (result != true) return;
+                if (result != true) 
+                {
+                    Console.WriteLine("LoadCsv: User cancelled file dialog");
+                    return;
+                }
 
+                Console.WriteLine($"LoadCsv: Loading file: {dlg.FileName}");
                 var items = CsvLoader.Load(dlg.FileName);
+                Console.WriteLine($"LoadCsv: Loaded {items.Count()} items from CSV");
+                
                 _projects.Clear();
                 foreach (var it in items) _projects.Add(it);
+                Console.WriteLine($"LoadCsv: Added {_projects.Count} projects to collection");
+                
                 RebuildProjectTypes();
                 RefreshView();
                 OnPropertyChanged(nameof(IncludedCount));
                 UpdateAverages();
+                Console.WriteLine("LoadCsv: Completed CSV load process");
             }
-            catch { }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"LoadCsv: ERROR - {ex.Message}");
+                Console.WriteLine($"LoadCsv: Stack trace - {ex.StackTrace}");
+            }
         }
 
         private void RebuildProjectTypes()
         {
+            Console.WriteLine("RebuildProjectTypes: Starting rebuild");
             AllProjectTypes.Clear();
             AllProjectTypes.Add("All types");
-            foreach (var t in _projects.SelectMany(p => p.ProjectTypes).Distinct().OrderBy(s => s))
+            var projectTypes = _projects.SelectMany(p => p.ProjectTypes).Distinct().OrderBy(s => s).ToList();
+            Console.WriteLine($"RebuildProjectTypes: Found {projectTypes.Count} unique project types");
+            foreach (var t in projectTypes)
+            {
                 AllProjectTypes.Add(t);
+                Console.WriteLine($"RebuildProjectTypes: Added type '{t}'");
+            }
+            Console.WriteLine($"RebuildProjectTypes: Total types in collection: {AllProjectTypes.Count}");
         }
 
         private bool FilterProject(object obj)
         {
-            if (obj is not ProjectRecord p) return false;
-            if (MinArea.HasValue && p.TotalArea < MinArea.Value) return false;
-            if (MaxArea.HasValue && p.TotalArea > MaxArea.Value) return false;
+            if (obj is not ProjectRecord p) 
+            {
+                Console.WriteLine("FilterProject: Object is not ProjectRecord");
+                return false;
+            }
+            
+            if (MinArea.HasValue && p.TotalArea < MinArea.Value) 
+            {
+                Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by MinArea ({p.TotalArea} < {MinArea.Value})");
+                return false;
+            }
+            
+            if (MaxArea.HasValue && p.TotalArea > MaxArea.Value) 
+            {
+                Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by MaxArea ({p.TotalArea} > {MaxArea.Value})");
+                return false;
+            }
+            
             if (SelectedProjectTypes.Count > 0)
             {
                 var selected = SelectedProjectTypes.Cast<string>().ToList();
+                Console.WriteLine($"FilterProject: Project {p.ProjectId} - Selected types: [{string.Join(", ", selected)}]");
+                Console.WriteLine($"FilterProject: Project {p.ProjectId} - Project types: [{string.Join(", ", p.ProjectTypes)}]");
+                
                 // If "All types" is selected, skip project type filtering
                 if (!selected.Contains("All types"))
                 {
                     if (ProjectTypeMatchMode == ProjectTypeMatchMode.All)
                     {
                         var projectTypeSet = p.ProjectTypes.ToHashSet();
-                        if (!selected.All(projectTypeSet.Contains)) return false;
+                        if (!selected.All(projectTypeSet.Contains)) 
+                        {
+                            Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by ProjectType (All mode - missing types)");
+                            return false;
+                        }
                     }
                     else
                     {
-                        if (!p.ProjectTypes.Any(t => selected.Contains(t))) return false;
+                        if (!p.ProjectTypes.Any(t => selected.Contains(t))) 
+                        {
+                            Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by ProjectType (Any mode - no matching types)");
+                            return false;
+                        }
                     }
                 }
+                else
+                {
+                    Console.WriteLine($"FilterProject: Project {p.ProjectId} - 'All types' selected, skipping type filtering");
+                }
             }
+            
+            Console.WriteLine($"FilterProject: Project {p.ProjectId} passed all filters");
             return true;
         }
 
         private void ResetFilters()
         {
+            Console.WriteLine("=== ResetFilters: Resetting all filters ===");
+            Console.WriteLine($"ResetFilters: Before - MinArea: {MinArea}, MaxArea: {MaxArea}, SelectedTypes: {SelectedProjectTypes.Count}");
+            
             MinArea = null;
             MaxArea = null;
             SelectedProjectTypes.Clear();
             ProjectTypeMatchMode = ProjectTypeMatchMode.Any;
+            
+            Console.WriteLine("ResetFilters: All filters cleared, refreshing view");
             RefreshView();
+            Console.WriteLine("ResetFilters: Completed filter reset");
         }
 
         private void SetIncludeForMatches(bool include)
         {
-            foreach (var obj in ProjectsView.Cast<ProjectRecord>())
+            Console.WriteLine($"=== SetIncludeForMatches: Setting Include={include} for all filtered items ===");
+            var items = ProjectsView.Cast<ProjectRecord>().ToList();
+            Console.WriteLine($"SetIncludeForMatches: Found {items.Count} filtered items");
+            
+            foreach (var obj in items)
+            {
+                Console.WriteLine($"SetIncludeForMatches: Setting Project {obj.ProjectId} Include to {include}");
                 obj.Include = include;
+            }
+            
             UpdateAverages();
             OnPropertyChanged(nameof(IncludedCount));
+            Console.WriteLine("SetIncludeForMatches: Completed batch include/exclude operation");
         }
 
         private IEnumerable<ProjectRecord> FilteredItems => ProjectsView.Cast<ProjectRecord>();
@@ -213,14 +316,24 @@ namespace CostsViewer.ViewModels
 
         private void UpdateAverages()
         {
+            Console.WriteLine("=== UpdateAverages: Starting calculation ===");
             var list = FilteredIncluded.ToList();
+            Console.WriteLine($"UpdateAverages: Found {list.Count} included items for calculation");
+            
             if (list.Count == 0)
             {
+                Console.WriteLine("UpdateAverages: No items included, setting all averages to 0");
                 AverageArea = 0;
                 AverageKG220 = AverageKG410 = AverageKG420 = AverageKG434 = AverageKG430 = AverageKG440 = AverageKG450 = AverageKG460 = AverageKG480 = AverageKG550 = 0;
             }
             else
             {
+                Console.WriteLine("UpdateAverages: Calculating averages...");
+                foreach (var item in list)
+                {
+                    Console.WriteLine($"UpdateAverages: Item {item.ProjectId} - Include: {item.Include}, Area: {item.TotalArea}, KG220: {item.CostPerSqmKG220}");
+                }
+                
                 AverageArea = list.Average(p => p.TotalArea);
                 AverageKG220 = list.Average(p => p.CostPerSqmKG220);
                 AverageKG410 = list.Average(p => p.CostPerSqmKG410);
@@ -232,6 +345,8 @@ namespace CostsViewer.ViewModels
                 AverageKG460 = list.Average(p => p.CostPerSqmKG460);
                 AverageKG480 = list.Average(p => p.CostPerSqmKG480);
                 AverageKG550 = list.Average(p => p.CostPerSqmKG550);
+                
+                Console.WriteLine($"UpdateAverages: Calculated - Area: {AverageArea:F2}, KG220: {AverageKG220:F2}, KG410: {AverageKG410:F2}");
             }
 
             OnPropertyChanged(nameof(AverageKG220));
@@ -244,35 +359,62 @@ namespace CostsViewer.ViewModels
             OnPropertyChanged(nameof(AverageKG460));
             OnPropertyChanged(nameof(AverageKG480));
             OnPropertyChanged(nameof(AverageKG550));
+            Console.WriteLine("UpdateAverages: Completed calculation and property notifications");
         }
 
         private void RefreshView()
         {
+            Console.WriteLine("=== RefreshView: Starting view refresh ===");
             if (ProjectsView is IEditableCollectionView editable)
             {
                 if (editable.IsAddingNew)
                 {
+                    Console.WriteLine("RefreshView: Committing new item");
                     try { editable.CommitNew(); } catch { }
                 }
                 if (editable.IsEditingItem)
                 {
+                    Console.WriteLine("RefreshView: Committing edit");
                     try { editable.CommitEdit(); } catch { }
                 }
             }
 
+            Console.WriteLine("RefreshView: Refreshing ProjectsView");
             ProjectsView.Refresh();
             UpdateAverages();
             OnPropertyChanged(nameof(IncludedCount));
+            Console.WriteLine("RefreshView: Completed view refresh");
         }
 
         private void ExportExcel()
         {
-            try { ExportServices.ExcelExporter.Export(FilteredIncluded.ToList()); } catch { }
+            try 
+            { 
+                var exportItems = FilteredIncluded.ToList();
+                Console.WriteLine($"ExportExcel: Exporting {exportItems.Count} included items to Excel");
+                ExportServices.ExcelExporter.Export(exportItems);
+                Console.WriteLine("ExportExcel: Excel export completed successfully");
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ExportExcel: ERROR - {ex.Message}");
+            }
         }
 
         private void ExportPdf()
         {
-            try { ExportServices.PdfExporter.Export(FilteredIncluded.ToList(), AverageArea, AverageKG220, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG480, AverageKG550); } catch { }
+            try 
+            { 
+                var exportItems = FilteredIncluded.ToList();
+                Console.WriteLine($"ExportPdf: Exporting {exportItems.Count} included items to PDF");
+                Console.WriteLine($"ExportPdf: Using averages - Area: {AverageArea:F2}, KG220: {AverageKG220:F2}");
+                ExportServices.PdfExporter.Export(exportItems, AverageArea, AverageKG220, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG480, AverageKG550);
+                Console.WriteLine("ExportPdf: PDF export completed successfully");
+            } 
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ExportPdf: ERROR - {ex.Message}");
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
