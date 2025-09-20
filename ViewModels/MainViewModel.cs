@@ -315,6 +315,42 @@ namespace CostsViewer.ViewModels
         public double AverageKG480 { get; private set; }
         public double AverageKG550 { get; private set; }
 
+        // Min values for each cost group
+        public double MinKG220 { get; private set; }
+        public double MinKG410 { get; private set; }
+        public double MinKG420 { get; private set; }
+        public double MinKG434 { get; private set; }
+        public double MinKG430 { get; private set; }
+        public double MinKG440 { get; private set; }
+        public double MinKG450 { get; private set; }
+        public double MinKG460 { get; private set; }
+        public double MinKG480 { get; private set; }
+        public double MinKG550 { get; private set; }
+
+        // Max values for each cost group
+        public double MaxKG220 { get; private set; }
+        public double MaxKG410 { get; private set; }
+        public double MaxKG420 { get; private set; }
+        public double MaxKG434 { get; private set; }
+        public double MaxKG430 { get; private set; }
+        public double MaxKG440 { get; private set; }
+        public double MaxKG450 { get; private set; }
+        public double MaxKG460 { get; private set; }
+        public double MaxKG480 { get; private set; }
+        public double MaxKG550 { get; private set; }
+
+        // Standard Deviation values for each cost group
+        public double StdDevKG220 { get; private set; }
+        public double StdDevKG410 { get; private set; }
+        public double StdDevKG420 { get; private set; }
+        public double StdDevKG434 { get; private set; }
+        public double StdDevKG430 { get; private set; }
+        public double StdDevKG440 { get; private set; }
+        public double StdDevKG450 { get; private set; }
+        public double StdDevKG460 { get; private set; }
+        public double StdDevKG480 { get; private set; }
+        public double StdDevKG550 { get; private set; }
+
         private void UpdateAverages()
         {
             Console.WriteLine("=== UpdateAverages: Starting calculation ===");
@@ -323,13 +359,16 @@ namespace CostsViewer.ViewModels
             
             if (list.Count == 0)
             {
-                Console.WriteLine("UpdateAverages: No items included, setting all averages to 0");
+                Console.WriteLine("UpdateAverages: No items included, setting all values to 0");
                 AverageArea = 0;
                 AverageKG220 = AverageKG410 = AverageKG420 = AverageKG434 = AverageKG430 = AverageKG440 = AverageKG450 = AverageKG460 = AverageKG480 = AverageKG550 = 0;
+                MinKG220 = MinKG410 = MinKG420 = MinKG434 = MinKG430 = MinKG440 = MinKG450 = MinKG460 = MinKG480 = MinKG550 = 0;
+                MaxKG220 = MaxKG410 = MaxKG420 = MaxKG434 = MaxKG430 = MaxKG440 = MaxKG450 = MaxKG460 = MaxKG480 = MaxKG550 = 0;
+                StdDevKG220 = StdDevKG410 = StdDevKG420 = StdDevKG434 = StdDevKG430 = StdDevKG440 = StdDevKG450 = StdDevKG460 = StdDevKG480 = StdDevKG550 = 0;
             }
             else
             {
-                Console.WriteLine("UpdateAverages: Calculating averages...");
+                Console.WriteLine("UpdateAverages: Calculating averages, mins, and maxs...");
                 foreach (var item in list)
                 {
                     Console.WriteLine($"UpdateAverages: Item {item.ProjectId} - Include: {item.Include}, Area: {item.TotalArea}, KG220: {item.CostPerSqmKG220}");
@@ -346,8 +385,44 @@ namespace CostsViewer.ViewModels
                 AverageKG460 = list.Average(p => p.CostPerSqmKG460);
                 AverageKG480 = list.Average(p => p.CostPerSqmKG480);
                 AverageKG550 = list.Average(p => p.CostPerSqmKG550);
+
+                // Calculate Min values (excluding zeros)
+                MinKG220 = list.Where(p => p.CostPerSqmKG220 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG220 ?? 0);
+                MinKG410 = list.Where(p => p.CostPerSqmKG410 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG410 ?? 0);
+                MinKG420 = list.Where(p => p.CostPerSqmKG420 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG420 ?? 0);
+                MinKG434 = list.Where(p => p.CostPerSqmKG434 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG434 ?? 0);
+                MinKG430 = list.Where(p => p.CostPerSqmKG430 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG430 ?? 0);
+                MinKG440 = list.Where(p => p.CostPerSqmKG440 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG440 ?? 0);
+                MinKG450 = list.Where(p => p.CostPerSqmKG450 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG450 ?? 0);
+                MinKG460 = list.Where(p => p.CostPerSqmKG460 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG460 ?? 0);
+                MinKG480 = list.Where(p => p.CostPerSqmKG480 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG480 ?? 0);
+                MinKG550 = list.Where(p => p.CostPerSqmKG550 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG550 ?? 0);
+
+                // Calculate Max values
+                MaxKG220 = list.Max(p => p.CostPerSqmKG220);
+                MaxKG410 = list.Max(p => p.CostPerSqmKG410);
+                MaxKG420 = list.Max(p => p.CostPerSqmKG420);
+                MaxKG434 = list.Max(p => p.CostPerSqmKG434);
+                MaxKG430 = list.Max(p => p.CostPerSqmKG430);
+                MaxKG440 = list.Max(p => p.CostPerSqmKG440);
+                MaxKG450 = list.Max(p => p.CostPerSqmKG450);
+                MaxKG460 = list.Max(p => p.CostPerSqmKG460);
+                MaxKG480 = list.Max(p => p.CostPerSqmKG480);
+                MaxKG550 = list.Max(p => p.CostPerSqmKG550);
+
+                // Calculate Standard Deviations (excluding zeros)
+                StdDevKG220 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG220 > 0).Select(p => (double)p.CostPerSqmKG220).ToList(), list.Where(p => p.CostPerSqmKG220 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG220 ?? 0));
+                StdDevKG410 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG410 > 0).Select(p => (double)p.CostPerSqmKG410).ToList(), list.Where(p => p.CostPerSqmKG410 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG410 ?? 0));
+                StdDevKG420 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG420 > 0).Select(p => (double)p.CostPerSqmKG420).ToList(), list.Where(p => p.CostPerSqmKG420 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG420 ?? 0));
+                StdDevKG434 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG434 > 0).Select(p => (double)p.CostPerSqmKG434).ToList(), list.Where(p => p.CostPerSqmKG434 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG434 ?? 0));
+                StdDevKG430 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG430 > 0).Select(p => (double)p.CostPerSqmKG430).ToList(), list.Where(p => p.CostPerSqmKG430 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG430 ?? 0));
+                StdDevKG440 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG440 > 0).Select(p => (double)p.CostPerSqmKG440).ToList(), list.Where(p => p.CostPerSqmKG440 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG440 ?? 0));
+                StdDevKG450 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG450 > 0).Select(p => (double)p.CostPerSqmKG450).ToList(), list.Where(p => p.CostPerSqmKG450 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG450 ?? 0));
+                StdDevKG460 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG460 > 0).Select(p => (double)p.CostPerSqmKG460).ToList(), list.Where(p => p.CostPerSqmKG460 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG460 ?? 0));
+                StdDevKG480 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG480 > 0).Select(p => (double)p.CostPerSqmKG480).ToList(), list.Where(p => p.CostPerSqmKG480 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG480 ?? 0));
+                StdDevKG550 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG550 > 0).Select(p => (double)p.CostPerSqmKG550).ToList(), list.Where(p => p.CostPerSqmKG550 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG550 ?? 0));
                 
-                Console.WriteLine($"UpdateAverages: Calculated - Area: {AverageArea:F2}, KG220: {AverageKG220:F2}, KG410: {AverageKG410:F2}");
+                Console.WriteLine($"UpdateAverages: Calculated - Area: {AverageArea:F2}, KG220: Avg={AverageKG220:F2}, Min={MinKG220:F2}, Max={MaxKG220:F2}, StdDev={StdDevKG220:F2}");
             }
 
             OnPropertyChanged(nameof(AverageKG220));
@@ -360,6 +435,39 @@ namespace CostsViewer.ViewModels
             OnPropertyChanged(nameof(AverageKG460));
             OnPropertyChanged(nameof(AverageKG480));
             OnPropertyChanged(nameof(AverageKG550));
+
+            OnPropertyChanged(nameof(MinKG220));
+            OnPropertyChanged(nameof(MinKG410));
+            OnPropertyChanged(nameof(MinKG420));
+            OnPropertyChanged(nameof(MinKG434));
+            OnPropertyChanged(nameof(MinKG430));
+            OnPropertyChanged(nameof(MinKG440));
+            OnPropertyChanged(nameof(MinKG450));
+            OnPropertyChanged(nameof(MinKG460));
+            OnPropertyChanged(nameof(MinKG480));
+            OnPropertyChanged(nameof(MinKG550));
+
+            OnPropertyChanged(nameof(MaxKG220));
+            OnPropertyChanged(nameof(MaxKG410));
+            OnPropertyChanged(nameof(MaxKG420));
+            OnPropertyChanged(nameof(MaxKG434));
+            OnPropertyChanged(nameof(MaxKG430));
+            OnPropertyChanged(nameof(MaxKG440));
+            OnPropertyChanged(nameof(MaxKG450));
+            OnPropertyChanged(nameof(MaxKG460));
+            OnPropertyChanged(nameof(MaxKG480));
+            OnPropertyChanged(nameof(MaxKG550));
+
+            OnPropertyChanged(nameof(StdDevKG220));
+            OnPropertyChanged(nameof(StdDevKG410));
+            OnPropertyChanged(nameof(StdDevKG420));
+            OnPropertyChanged(nameof(StdDevKG434));
+            OnPropertyChanged(nameof(StdDevKG430));
+            OnPropertyChanged(nameof(StdDevKG440));
+            OnPropertyChanged(nameof(StdDevKG450));
+            OnPropertyChanged(nameof(StdDevKG460));
+            OnPropertyChanged(nameof(StdDevKG480));
+            OnPropertyChanged(nameof(StdDevKG550));
             
             UpdateCostGroupSummary();
             Console.WriteLine("UpdateAverages: Completed calculation and property notifications");
