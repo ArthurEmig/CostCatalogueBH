@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Data;
 using System.Windows.Input;
 using CostsViewer.Models;
 using CostsViewer.Services;
+using CostsViewer.ExportServices;
 
 namespace CostsViewer.ViewModels
 {
@@ -67,7 +69,7 @@ namespace CostsViewer.ViewModels
             } 
         }
 
-        public ICommand LoadCsvCommand { get; }
+        public ICommand LoadFileCommand { get; }
         public ICommand ApplyFilterCommand { get; }
         public ICommand ResetFilterCommand { get; }
         public ICommand IncludeMatchesCommand { get; }
@@ -91,7 +93,7 @@ namespace CostsViewer.ViewModels
                 Console.WriteLine("MainViewModel: SelectedProjectTypes change handler attached");
             }
 
-            LoadCsvCommand = new RelayCommand(_ => LoadCsv());
+            LoadFileCommand = new RelayCommand(_ => LoadFile());
             ApplyFilterCommand = new RelayCommand(_ => RefreshView());
             ResetFilterCommand = new RelayCommand(_ => ResetFilters());
             IncludeMatchesCommand = new RelayCommand(_ => SetIncludeForMatches(true));
@@ -152,15 +154,15 @@ namespace CostsViewer.ViewModels
             }
         }
 
-        private void LoadCsv()
+        private void LoadFile()
         {
             try
             {
-                Console.WriteLine("=== LoadCsv: Starting CSV load process ===");
+                Console.WriteLine("=== LoadFile: Starting file load process ===");
                 var dlg = new Microsoft.Win32.OpenFileDialog
                 {
-                    Title = "Select costs CSV",
-                    Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
+                    Title = "Select costs file",
+                    Filter = "Supported files (*.csv;*.xlsx)|*.csv;*.xlsx|CSV files (*.csv)|*.csv|Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
                     CheckFileExists = true,
                     Multiselect = false
                 };
@@ -168,28 +170,46 @@ namespace CostsViewer.ViewModels
                 var result = dlg.ShowDialog();
                 if (result != true) 
                 {
-                    Console.WriteLine("LoadCsv: User cancelled file dialog");
+                    Console.WriteLine("LoadFile: User cancelled file dialog");
                     return;
                 }
 
-                Console.WriteLine($"LoadCsv: Loading file: {dlg.FileName}");
-                var items = CsvLoader.Load(dlg.FileName);
-                Console.WriteLine($"LoadCsv: Loaded {items.Count()} items from CSV");
+                Console.WriteLine($"LoadFile: Loading file: {dlg.FileName}");
+                
+                List<ProjectRecord> items;
+                var extension = Path.GetExtension(dlg.FileName).ToLowerInvariant();
+                
+                switch (extension)
+                {
+                    case ".csv":
+                        Console.WriteLine("LoadFile: Loading as CSV file");
+                        items = CsvLoader.Load(dlg.FileName);
+                        break;
+                    case ".xlsx":
+                        Console.WriteLine("LoadFile: Loading as Excel file");
+                        items = ExcelLoader.Load(dlg.FileName);
+                        break;
+                    default:
+                        Console.WriteLine($"LoadFile: Unsupported file extension: {extension}");
+                        throw new NotSupportedException($"Unsupported file format: {extension}. Please select a CSV (.csv) or Excel (.xlsx) file.");
+                }
+                
+                Console.WriteLine($"LoadFile: Loaded {items.Count()} items from {extension.ToUpper()} file");
                 
                 _projects.Clear();
                 foreach (var it in items) _projects.Add(it);
-                Console.WriteLine($"LoadCsv: Added {_projects.Count} projects to collection");
+                Console.WriteLine($"LoadFile: Added {_projects.Count} projects to collection");
                 
                 RebuildProjectTypes();
                 RefreshView();
                 OnPropertyChanged(nameof(IncludedCount));
                 UpdateAverages();
-                Console.WriteLine("LoadCsv: Completed CSV load process");
+                Console.WriteLine("LoadFile: Completed file load process");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"LoadCsv: ERROR - {ex.Message}");
-                Console.WriteLine($"LoadCsv: Stack trace - {ex.StackTrace}");
+                Console.WriteLine($"LoadFile: ERROR - {ex.Message}");
+                Console.WriteLine($"LoadFile: Stack trace - {ex.StackTrace}");
             }
         }
 

@@ -8,7 +8,7 @@
         Title="Costs Viewer" Height="720" Width="1200">
     <DockPanel>
         <ToolBar DockPanel.Dock="Top">
-            <Button Content="Load CSV" Command="{Binding LoadCsvCommand}" Margin="0,0,8,0"/>
+            <Button Content="Load File" Command="{Binding LoadFileCommand}" Margin="0,0,8,0"/>
             <Separator/>
             <TextBlock VerticalAlignment="Center" Text="Min Area:" Margin="8,0,4,0"/>
             <TextBox Width="100" Text="{Binding MinArea, UpdateSourceTrigger=PropertyChanged}"/>
