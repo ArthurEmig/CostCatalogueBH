@@ -4,6 +4,7 @@ using System.IO;
 using CostsViewer.Models;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
+using PdfSharp;
 using System.Text;
 
 namespace CostsViewer.ExportServices
@@ -22,21 +23,22 @@ namespace CostsViewer.ExportServices
 
                 using var doc = new PdfDocument();
                 var page = doc.AddPage();
+                page.Orientation = PdfSharp.PageOrientation.Landscape; // Set to landscape orientation
                 var gfx = XGraphics.FromPdfPage(page);
                 
-                // Use more compatible font creation
+                // Use normal font sizes since we have landscape orientation
                 XFont font;
                 XFont boldFont;
                 try
                 {
-                    font = new XFont("Arial", 12, XFontStyle.Regular);
-                    boldFont = new XFont("Arial", 12, XFontStyle.Bold);
+                    font = new XFont("Arial", 11, XFontStyle.Regular);
+                    boldFont = new XFont("Arial", 11, XFontStyle.Bold);
                 }
                 catch
                 {
                     // Fallback to default fonts if Arial is not available
-                    font = new XFont("Times New Roman", 12, XFontStyle.Regular);
-                    boldFont = new XFont("Times New Roman", 12, XFontStyle.Bold);
+                    font = new XFont("Times New Roman", 11, XFontStyle.Regular);
+                    boldFont = new XFont("Times New Roman", 11, XFontStyle.Bold);
                 }
                 
                 double y = 40;
@@ -73,29 +75,30 @@ namespace CostsViewer.ExportServices
                 gfx.DrawString("Cost Group Summary (DIN 276):", sectionFont, XBrushes.Black, new XPoint(40, y));
             y += 25;
 
-            // Summary table headers
+            // Summary table headers with landscape spacing - no truncation needed
             gfx.DrawString("Cost Group", boldFont, XBrushes.Black, new XPoint(40, y));
-            gfx.DrawString("Description", boldFont, XBrushes.Black, new XPoint(120, y));
-            gfx.DrawString("Avg €/sqm", boldFont, XBrushes.Black, new XPoint(250, y));
-            gfx.DrawString("Min €/sqm", boldFont, XBrushes.Black, new XPoint(320, y));
-            gfx.DrawString("Max €/sqm", boldFont, XBrushes.Black, new XPoint(390, y));
-            gfx.DrawString("Std Dev", boldFont, XBrushes.Black, new XPoint(460, y));
+            gfx.DrawString("Description", boldFont, XBrushes.Black, new XPoint(140, y));
+            gfx.DrawString("Avg €/sqm", boldFont, XBrushes.Black, new XPoint(420, y));
+            gfx.DrawString("Min €/sqm", boldFont, XBrushes.Black, new XPoint(520, y));
+            gfx.DrawString("Max €/sqm", boldFont, XBrushes.Black, new XPoint(620, y));
+            gfx.DrawString("Std Dev", boldFont, XBrushes.Black, new XPoint(720, y));
             y += 20;
 
-            // Summary table data
+            // Summary table data with full descriptions - no truncation in landscape
             foreach (var summary in costGroupSummary)
             {
                 gfx.DrawString(summary.CostGroup, font, XBrushes.Black, new XPoint(40, y));
-                gfx.DrawString(summary.Description, font, XBrushes.Black, new XPoint(120, y));
-                gfx.DrawString($"{summary.AverageCost:F2}", font, XBrushes.Black, new XPoint(250, y));
-                gfx.DrawString($"{summary.MinCost:F2}", font, XBrushes.Black, new XPoint(320, y));
-                gfx.DrawString($"{summary.MaxCost:F2}", font, XBrushes.Black, new XPoint(390, y));
-                gfx.DrawString($"{summary.StandardDeviation:F2}", font, XBrushes.Black, new XPoint(460, y));
+                gfx.DrawString(summary.Description, font, XBrushes.Black, new XPoint(140, y)); // Full description
+                gfx.DrawString($"{summary.AverageCost:F2}", font, XBrushes.Black, new XPoint(420, y));
+                gfx.DrawString($"{summary.MinCost:F2}", font, XBrushes.Black, new XPoint(520, y));
+                gfx.DrawString($"{summary.MaxCost:F2}", font, XBrushes.Black, new XPoint(620, y));
+                gfx.DrawString($"{summary.StandardDeviation:F2}", font, XBrushes.Black, new XPoint(720, y));
                 y += 16;
                 
                 if (y > page.Height - 80)
                 {
                     page = doc.AddPage();
+                    page.Orientation = PageOrientation.Landscape; // Ensure new pages are also landscape
                     gfx = XGraphics.FromPdfPage(page);
                     y = 40;
                 }
@@ -129,6 +132,7 @@ namespace CostsViewer.ExportServices
                 if (y > page.Height - 80)
                 {
                     page = doc.AddPage();
+                    page.Orientation = PageOrientation.Landscape; // Ensure new pages are also landscape
                     gfx = XGraphics.FromPdfPage(page);
                     y = 40;
                 }
@@ -139,12 +143,14 @@ namespace CostsViewer.ExportServices
                 y += 22;
                 foreach (var p in records)
                 {
+                    // No truncation needed in landscape - show full information
                     var line = $"{(p.Include ? "[x]" : "[ ]")} {p.ProjectId} | {p.ProjectTitle} | {string.Join(", ", p.ProjectTypes)} | {p.TotalArea} sqm";
                     gfx.DrawString(line, font, XBrushes.Black, new XPoint(40, y));
                     y += 16;
                     if (y > page.Height - 40)
                     {
                         page = doc.AddPage();
+                        page.Orientation = PageOrientation.Landscape; // Ensure new pages are also landscape
                         gfx = XGraphics.FromPdfPage(page);
                         y = 40;
                     }
@@ -178,6 +184,7 @@ namespace CostsViewer.ExportServices
 
             using var doc = new PdfDocument();
             var page = doc.AddPage();
+            page.Orientation = PageOrientation.Landscape; // Landscape for fallback too
             var gfx = XGraphics.FromPdfPage(page);
             
             // Use the most basic font possible
@@ -201,6 +208,7 @@ namespace CostsViewer.ExportServices
                 if (y > page.Height - 40)
                 {
                     page = doc.AddPage();
+                    page.Orientation = PageOrientation.Landscape; // Ensure new pages are also landscape
                     gfx = XGraphics.FromPdfPage(page);
                     y = 40;
                 }
