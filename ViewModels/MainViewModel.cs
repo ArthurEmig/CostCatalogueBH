@@ -651,7 +651,7 @@ namespace CostsViewer.ViewModels
                 var summaryItems = CostGroupSummary.ToList();
                 Console.WriteLine($"ExportPdf: Exporting {exportItems.Count} included items and {summaryItems.Count} cost group summaries to PDF");
                 Console.WriteLine($"ExportPdf: Using averages - Area: {AverageArea:F2}, KG220: {AverageKG220:F2}");
-                ExportServices.PdfExporter.Export(exportItems, summaryItems, AverageArea, AverageKG220, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG480, AverageKG550);
+                ExportServices.PdfExporter.Export(exportItems, summaryItems, AverageArea, AverageKG220, AverageKG230, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG474, AverageKG475, AverageKG480, AverageKG550);
                 Console.WriteLine("ExportPdf: PDF export completed successfully");
             } 
             catch (Exception ex)
