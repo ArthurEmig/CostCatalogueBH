@@ -1,0 +1,51 @@
+Include,Project ID,Title,Types,Area,KG220 €/sqm,KG410 €/sqm,KG420 €/sqm,KG434 €/sqm,KG430 €/sqm,KG440 €/sqm,KG450 €/sqm,KG460 €/sqm,KG480 €/sqm,KG550 €/sqm
+TRUE,PRJ-2025-001,Riverview Apartments,Commercial,1086,370,81,88,14,43,63,77,38,7,23
+TRUE,PRJ-2025-002,Maplewood Offices,"Hospitality, Residential",1635,277,77,89,26,33,55,42,32,18,12
+TRUE,PRJ-2025-003,Lakeside Retail Center,"Mixed-Use, Education, Residential",2548,311,104,103,18,49,33,78,20,8,7
+TRUE,PRJ-2025-004,Grand Oak Logistics Park,Hospitality,2979,413,94,137,18,35,66,59,27,8,17
+TRUE,PRJ-2025-005,Cedar Grove School Campus,"Commercial, Renovation",4350,415,74,150,12,35,62,44,34,14,7
+TRUE,PRJ-2025-006,Hillcrest Medical Center,"Industrial, Commercial, Hospitality",5969,462,96,80,21,75,33,72,18,7,24
+TRUE,PRJ-2025-007,Brookfield Hotel,Office,8293,355,70,119,22,64,79,70,32,12,15
+TRUE,PRJ-2025-008,Fairview Mixed-Use Complex,"Residential, Industrial",10683,246,90,111,18,38,33,88,40,15,11
+TRUE,PRJ-2025-009,Pinecrest Civic Center,"Mixed-Use, Hospitality, New Build",11835,365,67,91,33,98,36,77,28,18,23
+TRUE,PRJ-2025-010,Willow Springs Innovation Hub,Hospitality,14982,342,67,125,25,41,68,33,37,8,9
+TRUE,PRJ-2025-011,Stonebridge Apartments,"Office, Hospitality",1232,262,99,108,29,89,53,46,27,5,8
+TRUE,PRJ-2025-012,Silverlake Offices,"Renovation, Education, Healthcare",1677,380,105,80,24,30,66,86,33,13,21
+TRUE,PRJ-2025-013,Brighton Retail Center,Office,2419,284,88,141,26,55,29,53,34,10,22
+TRUE,PRJ-2025-014,Westfield Logistics Park,"Renovation, Residential",3493,395,112,62,13,76,76,83,35,14,12
+TRUE,PRJ-2025-015,Easton School Campus,"Residential, Industrial, Commercial",4137,478,58,128,34,46,28,72,25,10,13
+TRUE,PRJ-2025-016,Kingston Medical Center,Renovation,6266,338,119,148,16,69,45,72,30,16,19
+TRUE,PRJ-2025-017,Ashford Hotel,"Renovation, Mixed-Use",7447,356,78,68,20,32,57,65,17,12,5
+TRUE,PRJ-2025-018,Meadowbrook Mixed-Use Complex,"Commercial, Residential, Industrial",9138,246,92,69,26,60,37,72,25,11,22
+TRUE,PRJ-2025-019,Highland Civic Center,Office,13588,472,81,120,35,82,32,36,13,18,16
+TRUE,PRJ-2025-020,Riverdale Innovation Hub,"Hospitality, New Build",15412,257,62,67,22,73,71,85,13,12,11
+TRUE,PRJ-2025-021,Northgate Apartments,"Industrial, Renovation, Mixed-Use",1115,446,73,95,24,61,75,89,12,19,22
+TRUE,PRJ-2025-022,Southport Offices,Commercial,1645,506,51,71,39,60,30,56,25,20,11
+TRUE,PRJ-2025-023,Greenville Retail Center,"Hospitality, Residential",2244,424,50,109,18,88,38,57,32,20,9
+TRUE,PRJ-2025-024,Oakridge Logistics Park,"Industrial, Education, New Build",2939,507,57,100,11,36,57,60,26,10,6
+TRUE,PRJ-2025-025,Clearwater School Campus,Renovation,4132,325,58,136,12,60,45,37,40,12,23
+TRUE,PRJ-2025-026,Bayview Medical Center,"New Build, Residential",5567,444,116,100,39,63,33,72,32,15,12
+TRUE,PRJ-2025-027,Springfield Hotel,"Education, Hospitality, Office",8575,383,108,100,39,39,20,59,29,8,7
+TRUE,PRJ-2025-028,Summerville Mixed-Use Complex,Renovation,9436,489,83,76,39,74,76,34,38,12,16
+TRUE,PRJ-2025-029,Parkside Civic Center,"Education, Office",13044,508,88,138,35,97,20,72,36,14,8
+TRUE,PRJ-2025-030,Union Square Innovation Hub,"Office, Education, Commercial",13938,513,69,94,19,56,65,51,16,13,21
+TRUE,PRJ-2025-031,Harbor Point Apartments,Mixed-Use,1144,256,61,141,23,65,22,30,20,9,25
+TRUE,PRJ-2025-032,Canyon Ridge Offices,"Education, Office",1846,512,104,131,10,44,24,90,38,9,22
+TRUE,PRJ-2025-033,Elmwood Retail Center,"Residential, Healthcare, Office",2380,295,55,99,21,35,77,52,16,12,8
+TRUE,PRJ-2025-034,Forest Hills Logistics Park,Healthcare,3453,438,69,90,37,50,71,81,15,18,5
+TRUE,PRJ-2025-035,Glenhaven School Campus,"Office, Healthcare",4851,440,81,94,15,43,44,85,11,20,12
+TRUE,PRJ-2025-036,Harborside Medical Center,"Industrial, Mixed-Use, Healthcare",6025,346,78,63,31,54,45,51,18,7,13
+TRUE,PRJ-2025-037,Inverness Hotel,Healthcare,8513,490,101,146,36,98,41,90,10,8,13
+TRUE,PRJ-2025-038,Kingsley Mixed-Use Complex,"Office, Education",9078,285,105,104,33,70,47,68,26,8,17
+TRUE,PRJ-2025-039,Lakeview Civic Center,"New Build, Industrial, Education",11431,453,50,126,39,98,63,76,40,11,16
+TRUE,PRJ-2025-040,Millstone Innovation Hub,Hospitality,13786,399,90,144,37,45,66,87,19,14,18
+TRUE,PRJ-2025-041,Northfield Apartments,"Healthcare, Hospitality",1258,381,120,76,16,83,62,90,22,10,24
+TRUE,PRJ-2025-042,Oak Meadows Offices,"New Build, Education, Hospitality",1900,230,88,96,16,85,70,67,29,15,19
+TRUE,PRJ-2025-043,Quarry Park Retail Center,Mixed-Use,2386,339,115,120,35,51,62,35,19,15,7
+TRUE,PRJ-2025-044,Redwood Logistics Park,"Industrial, Education",3110,331,68,63,11,61,50,69,37,7,19
+TRUE,PRJ-2025-045,Sunnyvale School Campus,"Hospitality, Industrial, New Build",4556,434,81,78,30,30,77,78,37,8,18
+TRUE,PRJ-2025-046,Timberline Medical Center,Industrial,5760,495,109,66,27,61,78,84,13,19,9
+TRUE,PRJ-2025-047,Uptown Hotel,"Mixed-Use, Renovation",8344,392,106,138,36,94,47,83,39,19,10
+TRUE,PRJ-2025-048,Valley Forge Mixed-Use Complex,"Mixed-Use, New Build, Education",10539,356,85,126,25,60,37,58,12,14,12
+TRUE,PRJ-2025-049,Wellington Civic Center,Education,12625,393,119,70,14,49,34,54,32,9,11
+TRUE,PRJ-2025-050,Yorktown Innovation Hub,"Commercial, Hospitality",15169,399,119,119,23,37,33,83,23,17,23

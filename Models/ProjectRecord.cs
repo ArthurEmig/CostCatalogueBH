@@ -20,6 +20,7 @@ namespace CostsViewer.Models
         public int TotalArea { get; set; }
 
         public int CostPerSqmKG220 { get; set; }
+        public int CostPerSqmKG230 { get; set; }
         public int CostPerSqmKG410 { get; set; }
         public int CostPerSqmKG420 { get; set; }
         public int CostPerSqmKG434 { get; set; }
@@ -27,6 +28,8 @@ namespace CostsViewer.Models
         public int CostPerSqmKG440 { get; set; }
         public int CostPerSqmKG450 { get; set; }
         public int CostPerSqmKG460 { get; set; }
+        public int CostPerSqmKG474 { get; set; }
+        public int CostPerSqmKG475 { get; set; }
         public int CostPerSqmKG480 { get; set; }
         public int CostPerSqmKG550 { get; set; }
 
