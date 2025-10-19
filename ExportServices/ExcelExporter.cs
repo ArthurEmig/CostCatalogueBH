@@ -23,7 +23,7 @@ namespace CostsViewer.ExportServices
 
             string[] headers = {
                 "Include","Project ID","Title","Types","Area",
-                "KG220 €/sqm","KG230 €/sqm","KG410 €/sqm","KG420 €/sqm","KG434 €/sqm","KG430 €/sqm","KG440 €/sqm","KG450 €/sqm","KG460 €/sqm","KG474 €/sqm","KG475 €/sqm","KG480 €/sqm","KG550 €/sqm","Year"
+                "KG220 €/sqm","KG230 €/sqm","KG410 €/sqm","KG420 €/sqm","KG434 €/sqm","KG430 €/sqm","KG440 €/sqm","KG450 €/sqm","KG460 €/sqm","KG490 €/sqm","KG474 €/sqm","KG475 €/sqm","KG480 €/sqm","KG550 €/sqm","Year"
             };
             for (int i = 0; i < headers.Length; i++) projectsWs.Cell(1, i + 1).Value = headers[i];
 
@@ -44,11 +44,12 @@ namespace CostsViewer.ExportServices
                 projectsWs.Cell(r,12).Value = p.CostPerSqmKG440;
                 projectsWs.Cell(r,13).Value = p.CostPerSqmKG450;
                 projectsWs.Cell(r,14).Value = p.CostPerSqmKG460;
-                projectsWs.Cell(r,15).Value = p.CostPerSqmKG474;
-                projectsWs.Cell(r,16).Value = p.CostPerSqmKG475;
-                projectsWs.Cell(r,17).Value = p.CostPerSqmKG480;
-                projectsWs.Cell(r,18).Value = p.CostPerSqmKG550;
-                projectsWs.Cell(r,19).Value = p.Year;
+                projectsWs.Cell(r,15).Value = p.CostPerSqmKG490;
+                projectsWs.Cell(r,16).Value = p.CostPerSqmKG474;
+                projectsWs.Cell(r,17).Value = p.CostPerSqmKG475;
+                projectsWs.Cell(r,18).Value = p.CostPerSqmKG480;
+                projectsWs.Cell(r,19).Value = p.CostPerSqmKG550;
+                projectsWs.Cell(r,20).Value = p.Year;
                 r++;
             }
 
@@ -106,7 +107,7 @@ namespace CostsViewer.ExportServices
             var csv = new StringBuilder();
 
             // Add header row matching the import format
-            csv.AppendLine("Include,Project ID,Title,Types,Area,KG220 €/sqm,KG230 €/sqm,KG410 €/sqm,KG420 €/sqm,KG434 €/sqm,KG430 €/sqm,KG440 €/sqm,KG450 €/sqm,KG460 €/sqm,KG474 €/sqm,KG475 €/sqm,KG480 €/sqm,KG550 €/sqm,Year");
+            csv.AppendLine("Include,Project ID,Title,Types,Area,KG220 €/sqm,KG230 €/sqm,KG410 €/sqm,KG420 €/sqm,KG434 €/sqm,KG430 €/sqm,KG440 €/sqm,KG450 €/sqm,KG460 €/sqm,KG490 €/sqm,KG474 €/sqm,KG475 €/sqm,KG480 €/sqm,KG550 €/sqm,Year");
 
             // Add data rows
             foreach (var record in records)
@@ -118,7 +119,7 @@ namespace CostsViewer.ExportServices
                     typesString = $"\"{typesString}\"";
                 }
 
-                csv.AppendLine($"{(record.Include ? "TRUE" : "FALSE")},{record.ProjectId},{record.ProjectTitle},{typesString},{record.TotalArea},{record.CostPerSqmKG220},{record.CostPerSqmKG230},{record.CostPerSqmKG410},{record.CostPerSqmKG420},{record.CostPerSqmKG434},{record.CostPerSqmKG430},{record.CostPerSqmKG440},{record.CostPerSqmKG450},{record.CostPerSqmKG460},{record.CostPerSqmKG474},{record.CostPerSqmKG475},{record.CostPerSqmKG480},{record.CostPerSqmKG550},{record.Year}");
+                csv.AppendLine($"{(record.Include ? "TRUE" : "FALSE")},{record.ProjectId},{record.ProjectTitle},{typesString},{record.TotalArea},{record.CostPerSqmKG220},{record.CostPerSqmKG230},{record.CostPerSqmKG410},{record.CostPerSqmKG420},{record.CostPerSqmKG434},{record.CostPerSqmKG430},{record.CostPerSqmKG440},{record.CostPerSqmKG450},{record.CostPerSqmKG460},{record.CostPerSqmKG490},{record.CostPerSqmKG474},{record.CostPerSqmKG475},{record.CostPerSqmKG480},{record.CostPerSqmKG550},{record.Year}");
             }
 
             File.WriteAllText(file, csv.ToString(), Encoding.UTF8);

@@ -32,6 +32,7 @@ namespace CostsViewer.Models
         public int CostPerSqmKG474 { get; set; }
         public int CostPerSqmKG475 { get; set; }
         public int CostPerSqmKG480 { get; set; }
+        public int CostPerSqmKG490 { get; set; }
         public int CostPerSqmKG550 { get; set; }
 
         public string ProjectTypesDisplay => string.Join(", ", ProjectTypes);

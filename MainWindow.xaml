@@ -61,6 +61,7 @@
                             <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="70"/>
                             <DataGridTextColumn Header="Project ID" Binding="{Binding ProjectId}" Width="120"/>
                             <DataGridTextColumn Header="Title" Binding="{Binding ProjectTitle}" Width="200"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="80"/>
                             <DataGridTextColumn Header="Types" Binding="{Binding ProjectTypesDisplay}" Width="200"/>
                             <DataGridTextColumn Header="Area (sqm)" Binding="{Binding TotalArea}" Width="100"/>
                             <DataGridTextColumn Header="KG220 €/sqm" Binding="{Binding CostPerSqmKG220}" Width="100"/>
@@ -75,8 +76,8 @@
                             <DataGridTextColumn Header="KG474 €/sqm" Binding="{Binding CostPerSqmKG474}" Width="100"/>
                             <DataGridTextColumn Header="KG475 €/sqm" Binding="{Binding CostPerSqmKG475}" Width="100"/>
                             <DataGridTextColumn Header="KG480 €/sqm" Binding="{Binding CostPerSqmKG480}" Width="100"/>
+                            <DataGridTextColumn Header="KG490 €/sqm" Binding="{Binding CostPerSqmKG490}" Width="100"/>
                             <DataGridTextColumn Header="KG550 €/sqm" Binding="{Binding CostPerSqmKG550}" Width="100"/>
-                            <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="80"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -103,6 +104,7 @@
                                     <ColumnDefinition Width="100"/>  <!-- KG440 -->
                                     <ColumnDefinition Width="100"/>  <!-- KG450 -->
                                     <ColumnDefinition Width="100"/>  <!-- KG460 -->
+                                    <ColumnDefinition Width="100"/>  <!-- KG490 -->
                                     <ColumnDefinition Width="100"/>  <!-- KG474 -->
                                     <ColumnDefinition Width="100"/>  <!-- KG475 -->
                                     <ColumnDefinition Width="100"/>  <!-- KG480 -->
@@ -131,7 +133,8 @@
                                 <TextBlock Grid.Column="14" Grid.Row="0" Text="KG474" FontWeight="Bold" HorizontalAlignment="Center" Margin="2"/>
                                 <TextBlock Grid.Column="15" Grid.Row="0" Text="KG475" FontWeight="Bold" HorizontalAlignment="Center" Margin="2"/>
                                 <TextBlock Grid.Column="16" Grid.Row="0" Text="KG480" FontWeight="Bold" HorizontalAlignment="Center" Margin="2"/>
-                                <TextBlock Grid.Column="17" Grid.Row="0" Text="KG550" FontWeight="Bold" HorizontalAlignment="Center" Margin="2"/>
+                                <TextBlock Grid.Column="17" Grid.Row="0" Text="KG490" FontWeight="Bold" HorizontalAlignment="Center" Margin="2"/>
+                                <TextBlock Grid.Column="18" Grid.Row="0" Text="KG550" FontWeight="Bold" HorizontalAlignment="Center" Margin="2"/>
 
                                 <!-- Headers for summary rows -->
                                 <TextBlock Grid.Column="3" Grid.Row="1" Text="Count:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2"/>
@@ -206,10 +209,15 @@
                                 <TextBlock Grid.Column="16" Grid.Row="3" Text="{Binding MinKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG480"/>
                                 <TextBlock Grid.Column="16" Grid.Row="4" Text="{Binding MaxKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG480"/>
 
+                                <!-- KG490 column -->
+                                <TextBlock Grid.Column="17" Grid.Row="2" Text="{Binding AverageKG490, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG490"/>
+                                <TextBlock Grid.Column="17" Grid.Row="3" Text="{Binding MinKG490, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG490"/>
+                                <TextBlock Grid.Column="17" Grid.Row="4" Text="{Binding MaxKG490, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG490"/>
+
                                 <!-- KG550 column -->
-                                <TextBlock Grid.Column="17" Grid.Row="2" Text="{Binding AverageKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG550"/>
-                                <TextBlock Grid.Column="17" Grid.Row="3" Text="{Binding MinKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG550"/>
-                                <TextBlock Grid.Column="17" Grid.Row="4" Text="{Binding MaxKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG550"/>
+                                <TextBlock Grid.Column="18" Grid.Row="2" Text="{Binding AverageKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG550"/>
+                                <TextBlock Grid.Column="18" Grid.Row="3" Text="{Binding MinKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG550"/>
+                                <TextBlock Grid.Column="18" Grid.Row="4" Text="{Binding MaxKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG550"/>
 
                                 <!-- Standard Deviation row for all cost groups -->
                                 <TextBlock Grid.Column="5" Grid.Row="5" Text="{Binding StdDevKG220, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG220"/>
@@ -224,7 +232,8 @@
                                 <TextBlock Grid.Column="14" Grid.Row="5" Text="{Binding StdDevKG474, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG474"/>
                                 <TextBlock Grid.Column="15" Grid.Row="5" Text="{Binding StdDevKG475, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG475"/>
                                 <TextBlock Grid.Column="16" Grid.Row="5" Text="{Binding StdDevKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG480"/>
-                                <TextBlock Grid.Column="17" Grid.Row="5" Text="{Binding StdDevKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG550"/>
+                                <TextBlock Grid.Column="17" Grid.Row="5" Text="{Binding StdDevKG490, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG490"/>
+                                <TextBlock Grid.Column="18" Grid.Row="5" Text="{Binding StdDevKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG550"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -236,7 +245,7 @@
                 <TabItem Header="Averages">
                     <StackPanel Orientation="Vertical" Margin="8">
                         <TextBlock Text="Included Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
-                        <UniformGrid Columns="2" Rows="12" Margin="0,0,0,8">
+                        <UniformGrid Columns="2" Margin="0,0,0,8">
                             <TextBlock Text="Count:"/>
                             <TextBlock Text="{Binding IncludedCount}"/>
                             <TextBlock Text="Area Avg:"/>
@@ -265,6 +274,8 @@
                             <TextBlock Text="{Binding AverageKG475, StringFormat={}{0:F0}}"/>
                             <TextBlock Text="KG480 €/sqm:"/>
                             <TextBlock Text="{Binding AverageKG480, StringFormat={}{0:F0}}"/>
+                            <TextBlock Text="KG490 €/sqm:"/>
+                            <TextBlock Text="{Binding AverageKG490, StringFormat={}{0:F0}}"/>
                             <TextBlock Text="KG550 €/sqm:"/>
                             <TextBlock Text="{Binding AverageKG550, StringFormat={}{0:F0}}"/>
                         </UniformGrid>

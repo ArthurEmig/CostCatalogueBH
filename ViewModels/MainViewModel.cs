@@ -34,39 +34,39 @@ namespace CostsViewer.ViewModels
         public ProjectTypeMatchMode ProjectTypeMatchMode
         {
             get => _projectTypeMatchMode;
-            set 
-            { 
+            set
+            {
                 Console.WriteLine($"ProjectTypeMatchMode: Changed from {_projectTypeMatchMode} to {value}");
-                _projectTypeMatchMode = value; 
-                OnPropertyChanged(); 
-                RefreshView(); 
+                _projectTypeMatchMode = value;
+                OnPropertyChanged();
+                RefreshView();
             }
         }
 
         private int? _minArea;
-        public int? MinArea 
-        { 
-            get => _minArea; 
-            set 
-            { 
+        public int? MinArea
+        {
+            get => _minArea;
+            set
+            {
                 Console.WriteLine($"MinArea: Changed from {_minArea} to {value}");
-                _minArea = value; 
-                OnPropertyChanged(); 
-                RefreshView(); 
-            } 
+                _minArea = value;
+                OnPropertyChanged();
+                RefreshView();
+            }
         }
 
         private int? _maxArea;
-        public int? MaxArea 
-        { 
-            get => _maxArea; 
-            set 
-            { 
+        public int? MaxArea
+        {
+            get => _maxArea;
+            set
+            {
                 Console.WriteLine($"MaxArea: Changed from {_maxArea} to {value}");
-                _maxArea = value; 
-                OnPropertyChanged(); 
-                RefreshView(); 
-            } 
+                _maxArea = value;
+                OnPropertyChanged();
+                RefreshView();
+            }
         }
 
         public ICommand LoadFileCommand { get; }
@@ -168,17 +168,17 @@ namespace CostsViewer.ViewModels
                 };
 
                 var result = dlg.ShowDialog();
-                if (result != true) 
+                if (result != true)
                 {
                     Console.WriteLine("LoadFile: User cancelled file dialog");
                     return;
                 }
 
                 Console.WriteLine($"LoadFile: Loading file: {dlg.FileName}");
-                
+
                 List<ProjectRecord> items;
                 var extension = Path.GetExtension(dlg.FileName).ToLowerInvariant();
-                
+
                 switch (extension)
                 {
                     case ".csv":
@@ -193,13 +193,13 @@ namespace CostsViewer.ViewModels
                         Console.WriteLine($"LoadFile: Unsupported file extension: {extension}");
                         throw new NotSupportedException($"Unsupported file format: {extension}. Please select a CSV (.csv) or Excel (.xlsx) file.");
                 }
-                
+
                 Console.WriteLine($"LoadFile: Loaded {items.Count()} items from {extension.ToUpper()} file");
-                
+
                 _projects.Clear();
                 foreach (var it in items) _projects.Add(it);
                 Console.WriteLine($"LoadFile: Added {_projects.Count} projects to collection");
-                
+
                 RebuildProjectTypes();
                 RefreshView();
                 OnPropertyChanged(nameof(IncludedCount));
@@ -230,37 +230,37 @@ namespace CostsViewer.ViewModels
 
         private bool FilterProject(object obj)
         {
-            if (obj is not ProjectRecord p) 
+            if (obj is not ProjectRecord p)
             {
                 Console.WriteLine("FilterProject: Object is not ProjectRecord");
                 return false;
             }
-            
-            if (MinArea.HasValue && p.TotalArea < MinArea.Value) 
+
+            if (MinArea.HasValue && p.TotalArea < MinArea.Value)
             {
                 Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by MinArea ({p.TotalArea} < {MinArea.Value})");
                 return false;
             }
-            
-            if (MaxArea.HasValue && p.TotalArea > MaxArea.Value) 
+
+            if (MaxArea.HasValue && p.TotalArea > MaxArea.Value)
             {
                 Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by MaxArea ({p.TotalArea} > {MaxArea.Value})");
                 return false;
             }
-            
+
             if (SelectedProjectTypes.Count > 0)
             {
                 var selected = SelectedProjectTypes.Cast<string>().ToList();
                 Console.WriteLine($"FilterProject: Project {p.ProjectId} - Selected types: [{string.Join(", ", selected)}]");
                 Console.WriteLine($"FilterProject: Project {p.ProjectId} - Project types: [{string.Join(", ", p.ProjectTypes)}]");
-                
+
                 // If "All types" is selected, skip project type filtering
                 if (!selected.Contains("All types"))
                 {
                     if (ProjectTypeMatchMode == ProjectTypeMatchMode.All)
                     {
                         var projectTypeSet = p.ProjectTypes.ToHashSet();
-                        if (!selected.All(projectTypeSet.Contains)) 
+                        if (!selected.All(projectTypeSet.Contains))
                         {
                             Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by ProjectType (All mode - missing types)");
                             return false;
@@ -268,7 +268,7 @@ namespace CostsViewer.ViewModels
                     }
                     else
                     {
-                        if (!p.ProjectTypes.Any(t => selected.Contains(t))) 
+                        if (!p.ProjectTypes.Any(t => selected.Contains(t)))
                         {
                             Console.WriteLine($"FilterProject: Project {p.ProjectId} filtered out by ProjectType (Any mode - no matching types)");
                             return false;
@@ -280,7 +280,7 @@ namespace CostsViewer.ViewModels
                     Console.WriteLine($"FilterProject: Project {p.ProjectId} - 'All types' selected, skipping type filtering");
                 }
             }
-            
+
             Console.WriteLine($"FilterProject: Project {p.ProjectId} passed all filters");
             return true;
         }
@@ -289,12 +289,12 @@ namespace CostsViewer.ViewModels
         {
             Console.WriteLine("=== ResetFilters: Resetting all filters ===");
             Console.WriteLine($"ResetFilters: Before - MinArea: {MinArea}, MaxArea: {MaxArea}, SelectedTypes: {SelectedProjectTypes.Count}");
-            
+
             MinArea = null;
             MaxArea = null;
             SelectedProjectTypes.Clear();
             ProjectTypeMatchMode = ProjectTypeMatchMode.Any;
-            
+
             Console.WriteLine("ResetFilters: All filters cleared, refreshing view");
             RefreshView();
             Console.WriteLine("ResetFilters: Completed filter reset");
@@ -305,13 +305,13 @@ namespace CostsViewer.ViewModels
             Console.WriteLine($"=== SetIncludeForMatches: Setting Include={include} for all filtered items ===");
             var items = ProjectsView.Cast<ProjectRecord>().ToList();
             Console.WriteLine($"SetIncludeForMatches: Found {items.Count} filtered items");
-            
+
             foreach (var obj in items)
             {
                 Console.WriteLine($"SetIncludeForMatches: Setting Project {obj.ProjectId} Include to {include}");
                 obj.Include = include;
             }
-            
+
             UpdateAverages();
             OnPropertyChanged(nameof(IncludedCount));
             Console.WriteLine("SetIncludeForMatches: Completed batch include/exclude operation");
@@ -333,6 +333,7 @@ namespace CostsViewer.ViewModels
         public double AverageKG440 { get; private set; }
         public double AverageKG450 { get; private set; }
         public double AverageKG460 { get; private set; }
+        public double AverageKG490 { get; private set; }
         public double AverageKG474 { get; private set; }
         public double AverageKG475 { get; private set; }
         public double AverageKG480 { get; private set; }
@@ -348,6 +349,7 @@ namespace CostsViewer.ViewModels
         public double MinKG440 { get; private set; }
         public double MinKG450 { get; private set; }
         public double MinKG460 { get; private set; }
+        public double MinKG490 { get; private set; }
         public double MinKG474 { get; private set; }
         public double MinKG475 { get; private set; }
         public double MinKG480 { get; private set; }
@@ -363,6 +365,7 @@ namespace CostsViewer.ViewModels
         public double MaxKG440 { get; private set; }
         public double MaxKG450 { get; private set; }
         public double MaxKG460 { get; private set; }
+        public double MaxKG490 { get; private set; }
         public double MaxKG474 { get; private set; }
         public double MaxKG475 { get; private set; }
         public double MaxKG480 { get; private set; }
@@ -378,6 +381,7 @@ namespace CostsViewer.ViewModels
         public double StdDevKG440 { get; private set; }
         public double StdDevKG450 { get; private set; }
         public double StdDevKG460 { get; private set; }
+        public double StdDevKG490 { get; private set; }
         public double StdDevKG474 { get; private set; }
         public double StdDevKG475 { get; private set; }
         public double StdDevKG480 { get; private set; }
@@ -388,7 +392,7 @@ namespace CostsViewer.ViewModels
             Console.WriteLine("=== UpdateAverages: Starting calculation ===");
             var list = FilteredIncluded.ToList();
             Console.WriteLine($"UpdateAverages: Found {list.Count} included items for calculation");
-            
+
             if (list.Count == 0)
             {
                 Console.WriteLine("UpdateAverages: No items included, setting all values to 0");
@@ -405,7 +409,7 @@ namespace CostsViewer.ViewModels
                 {
                     Console.WriteLine($"UpdateAverages: Item {item.ProjectId} - Include: {item.Include}, Area: {item.TotalArea}, KG220: {item.CostPerSqmKG220}");
                 }
-                
+
                 AverageArea = list.Average(p => p.TotalArea);
                 AverageKG220 = list.Average(p => p.CostPerSqmKG220);
                 AverageKG230 = list.Average(p => p.CostPerSqmKG230);
@@ -419,6 +423,7 @@ namespace CostsViewer.ViewModels
                 AverageKG474 = list.Average(p => p.CostPerSqmKG474);
                 AverageKG475 = list.Average(p => p.CostPerSqmKG475);
                 AverageKG480 = list.Average(p => p.CostPerSqmKG480);
+                AverageKG490 = list.Average(p => p.CostPerSqmKG490);
                 AverageKG550 = list.Average(p => p.CostPerSqmKG550);
 
                 // Calculate Min values (excluding zeros)
@@ -434,6 +439,7 @@ namespace CostsViewer.ViewModels
                 MinKG474 = list.Where(p => p.CostPerSqmKG474 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG474 ?? 0);
                 MinKG475 = list.Where(p => p.CostPerSqmKG475 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG475 ?? 0);
                 MinKG480 = list.Where(p => p.CostPerSqmKG480 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG480 ?? 0);
+                MinKG490 = list.Where(p => p.CostPerSqmKG490 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG490 ?? 0);
                 MinKG550 = list.Where(p => p.CostPerSqmKG550 > 0).DefaultIfEmpty().Min(p => p?.CostPerSqmKG550 ?? 0);
 
                 // Calculate Max values
@@ -449,6 +455,7 @@ namespace CostsViewer.ViewModels
                 MaxKG474 = list.Max(p => p.CostPerSqmKG474);
                 MaxKG475 = list.Max(p => p.CostPerSqmKG475);
                 MaxKG480 = list.Max(p => p.CostPerSqmKG480);
+                MaxKG490 = list.Max(p => p.CostPerSqmKG490);
                 MaxKG550 = list.Max(p => p.CostPerSqmKG550);
 
                 // Calculate Standard Deviations (excluding zeros)
@@ -464,8 +471,9 @@ namespace CostsViewer.ViewModels
                 StdDevKG474 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG474 > 0).Select(p => (double)p.CostPerSqmKG474).ToList(), list.Where(p => p.CostPerSqmKG474 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG474 ?? 0));
                 StdDevKG475 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG475 > 0).Select(p => (double)p.CostPerSqmKG475).ToList(), list.Where(p => p.CostPerSqmKG475 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG475 ?? 0));
                 StdDevKG480 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG480 > 0).Select(p => (double)p.CostPerSqmKG480).ToList(), list.Where(p => p.CostPerSqmKG480 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG480 ?? 0));
+                StdDevKG490 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG490 > 0).Select(p => (double)p.CostPerSqmKG490).ToList(), list.Where(p => p.CostPerSqmKG490 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG490 ?? 0));
                 StdDevKG550 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG550 > 0).Select(p => (double)p.CostPerSqmKG550).ToList(), list.Where(p => p.CostPerSqmKG550 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG550 ?? 0));
-                
+
                 Console.WriteLine($"UpdateAverages: Calculated - Area: {AverageArea:F2}, KG220: Avg={AverageKG220:F2}, Min={MinKG220:F2}, Max={MaxKG220:F2}, StdDev={StdDevKG220:F2}");
             }
 
@@ -479,6 +487,7 @@ namespace CostsViewer.ViewModels
             OnPropertyChanged(nameof(AverageKG450));
             OnPropertyChanged(nameof(AverageKG460));
             OnPropertyChanged(nameof(AverageKG474));
+            OnPropertyChanged(nameof(AverageKG490));
             OnPropertyChanged(nameof(AverageKG475));
             OnPropertyChanged(nameof(AverageKG480));
             OnPropertyChanged(nameof(AverageKG550));
@@ -493,6 +502,7 @@ namespace CostsViewer.ViewModels
             OnPropertyChanged(nameof(MinKG450));
             OnPropertyChanged(nameof(MinKG460));
             OnPropertyChanged(nameof(MinKG474));
+            OnPropertyChanged(nameof(MinKG490));
             OnPropertyChanged(nameof(MinKG475));
             OnPropertyChanged(nameof(MinKG480));
             OnPropertyChanged(nameof(MinKG550));
@@ -507,6 +517,7 @@ namespace CostsViewer.ViewModels
             OnPropertyChanged(nameof(MaxKG450));
             OnPropertyChanged(nameof(MaxKG460));
             OnPropertyChanged(nameof(MaxKG474));
+            OnPropertyChanged(nameof(MaxKG490));
             OnPropertyChanged(nameof(MaxKG475));
             OnPropertyChanged(nameof(MaxKG480));
             OnPropertyChanged(nameof(MaxKG550));
@@ -521,10 +532,11 @@ namespace CostsViewer.ViewModels
             OnPropertyChanged(nameof(StdDevKG450));
             OnPropertyChanged(nameof(StdDevKG460));
             OnPropertyChanged(nameof(StdDevKG474));
+            OnPropertyChanged(nameof(StdDevKG490));
             OnPropertyChanged(nameof(StdDevKG475));
             OnPropertyChanged(nameof(StdDevKG480));
             OnPropertyChanged(nameof(StdDevKG550));
-            
+
             UpdateCostGroupSummary();
             Console.WriteLine("UpdateAverages: Completed calculation and property notifications");
         }
@@ -555,6 +567,7 @@ namespace CostsViewer.ViewModels
                 new { Code = "KG440", Description = "Electrical Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG440) },
                 new { Code = "KG450", Description = "Communication & Safety Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG450) },
                 new { Code = "KG460", Description = "Conveying Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG460) },
+                new { Code = "KG490", Description = "Other Technical Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG490) },
                 new { Code = "KG474", Description = "Fire Protection Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG474) },
                 new { Code = "KG475", Description = "Security & Access Control", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG475) },
                 new { Code = "KG480", Description = "Building & System Automation", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG480) },
@@ -564,7 +577,7 @@ namespace CostsViewer.ViewModels
             foreach (var costGroup in costGroups)
             {
                 var values = includedItems.Select(costGroup.GetValue).Where(v => v > 0).ToList();
-                
+
                 if (values.Count > 0)
                 {
                     var average = values.Average();
@@ -629,14 +642,14 @@ namespace CostsViewer.ViewModels
 
         private void ExportExcel()
         {
-            try 
-            { 
+            try
+            {
                 var exportItems = FilteredIncluded.ToList();
                 var summaryItems = CostGroupSummary.ToList();
                 Console.WriteLine($"ExportExcel: Exporting {exportItems.Count} included items and {summaryItems.Count} cost group summaries to Excel");
                 ExportServices.ExcelExporter.Export(exportItems, summaryItems);
                 Console.WriteLine("ExportExcel: Excel export completed successfully");
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"ExportExcel: ERROR - {ex.Message}");
@@ -645,15 +658,15 @@ namespace CostsViewer.ViewModels
 
         private void ExportPdf()
         {
-            try 
-            { 
+            try
+            {
                 var exportItems = FilteredIncluded.ToList();
                 var summaryItems = CostGroupSummary.ToList();
                 Console.WriteLine($"ExportPdf: Exporting {exportItems.Count} included items and {summaryItems.Count} cost group summaries to PDF");
                 Console.WriteLine($"ExportPdf: Using averages - Area: {AverageArea:F2}, KG220: {AverageKG220:F2}");
                 ExportServices.PdfExporter.Export(exportItems, summaryItems, AverageArea, AverageKG220, AverageKG230, AverageKG410, AverageKG420, AverageKG434, AverageKG430, AverageKG440, AverageKG450, AverageKG460, AverageKG474, AverageKG475, AverageKG480, AverageKG550);
                 Console.WriteLine("ExportPdf: PDF export completed successfully");
-            } 
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"ExportPdf: ERROR - {ex.Message}");
@@ -678,5 +691,3 @@ namespace CostsViewer.ViewModels
         public event EventHandler? CanExecuteChanged { add { CommandManager.RequerySuggested += value; } remove { CommandManager.RequerySuggested -= value; } }
     }
 }
-
-

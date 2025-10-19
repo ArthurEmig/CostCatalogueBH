@@ -23,19 +23,20 @@ namespace CostsViewer.Services
 
             // Find the data range (skip empty rows)
             var rows = worksheet.RowsUsed().Skip(1); // Skip header row
+            var headerRow = worksheet.Row(1);
 
             foreach (var row in rows)
             {
                 try
                 {
                     // Check if the row has enough columns and is not empty
-                    if (row.CellsUsed().Count() < 18) // Minimum expected columns
+                    if (row.CellsUsed().Count() < 18) // Allow legacy files too; we'll map by headers below
                         continue;
 
                     var rec = new ProjectRecord
                     {
                         // Column mapping to match Excel export format:
-                        // Include, Project ID, Title, Types, Area, KG220, KG230, KG410, KG420, KG434, KG430, KG440, KG450, KG460, KG474, KG475, KG480, KG550
+                        // Include, Project ID, Title, Types, Area, KG220, KG230, KG410, KG420, KG434, KG430, KG440, KG450, KG460, KG474, KG475, KG480, KG490, KG550
                         Include = ParseBooleanField(row.Cell(1).GetString()),     // Column A: Include
                         ProjectId = row.Cell(2).GetString(),                      // Column B: Project ID
                         ProjectTitle = row.Cell(3).GetString(),                   // Column C: Title
@@ -53,22 +54,22 @@ namespace CostsViewer.Services
                         CostPerSqmKG474 = ParseIntField(row.Cell(15).GetString()),// Column O: KG474
                         CostPerSqmKG475 = ParseIntField(row.Cell(16).GetString()),// Column P: KG475
                         CostPerSqmKG480 = ParseIntField(row.Cell(17).GetString()),// Column Q: KG480
-                        CostPerSqmKG550 = ParseIntField(row.Cell(18).GetString()),// Column R: KG550
+                        CostPerSqmKG490 = GetByHeaderOrIndex(row, headerRow, "KG490 €/sqm", 18),
+                        CostPerSqmKG550 = GetByHeaderOrIndex(row, headerRow, "KG550 €/sqm", 19, 18),
                     };
                     // Optional Year column at the end (Column 19 / S) or by header name
                     try
                     {
                         int year = 0;
-                        // Try by position first if there are more than 18 columns
-                        if (row.Cell(19) != null && !row.Cell(19).IsEmpty())
+                        // Try by position first if there are more than 19 columns
+                        if (row.Cell(20) != null && !row.Cell(20).IsEmpty())
                         {
-                            year = ParseIntField(row.Cell(19).GetString());
+                            year = ParseIntField(row.Cell(20).GetString());
                         }
 
                         // If still zero, try header lookup
                         if (year == 0)
                         {
-                            var headerRow = worksheet.Row(1);
                             int lastCell = headerRow.LastCellUsed().Address.ColumnNumber;
                             for (int c = 1; c <= lastCell; c++)
                             {
@@ -135,6 +136,33 @@ namespace CostsViewer.Services
                       .Select(s => s.Trim())
                       .Where(s => !string.IsNullOrEmpty(s))
                       .ToList();
+        }
+
+        private static int GetByHeaderOrIndex(IXLRow row, IXLRow headerRow, string headerName, params int[] indices)
+        {
+            // Try header first
+            int lastCell = headerRow.LastCellUsed().Address.ColumnNumber;
+            for (int c = 1; c <= lastCell; c++)
+            {
+                var header = headerRow.Cell(c).GetString()?.Trim();
+                if (string.Equals(header, headerName, StringComparison.OrdinalIgnoreCase) || string.Equals(header, headerName.Replace(" €/sqm", string.Empty), StringComparison.OrdinalIgnoreCase))
+                {
+                    return ParseIntField(row.Cell(c).GetString());
+                }
+            }
+            // Fallback by indices
+            foreach (var idx in indices)
+            {
+                if (idx > 0)
+                {
+                    var cell = row.Cell(idx);
+                    if (cell != null && !cell.IsEmpty())
+                    {
+                        return ParseIntField(cell.GetString());
+                    }
+                }
+            }
+            return 0;
         }
     }
 }

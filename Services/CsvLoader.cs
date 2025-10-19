@@ -37,7 +37,7 @@ namespace CostsViewer.Services
                     var rec = new ProjectRecord
                     {
                         // Column mapping to match Excel export format:
-                        // Include, Project ID, Title, Types, Area, KG220, KG230, KG410, KG420, KG434, KG430, KG440, KG450, KG460, KG474, KG475, KG480, KG550
+                        // Include, Project ID, Title, Types, Area, KG220, KG230, KG410, KG420, KG434, KG430, KG440, KG450, KG460, KG474, KG475, KG480, KG490, KG550
                         Include = ParseBooleanField(csv.GetField(0)),  // Column 0: Include
                         ProjectId = csv.GetField(1) ?? string.Empty,   // Column 1: Project ID
                         ProjectTitle = csv.GetField(2) ?? string.Empty, // Column 2: Title
@@ -55,7 +55,8 @@ namespace CostsViewer.Services
                         CostPerSqmKG474 = csv.GetField<int>(14),       // Column 14: KG474
                         CostPerSqmKG475 = csv.GetField<int>(15),       // Column 15: KG475
                         CostPerSqmKG480 = csv.GetField<int>(16),       // Column 16: KG480
-                        CostPerSqmKG550 = csv.GetField<int>(17),       // Column 17: KG550
+                        CostPerSqmKG490 = TryGetCost(csv, "KG490 €/sqm", 17), // Column 17 if present; else header lookup
+                        CostPerSqmKG550 = TryGetCost(csv, "KG550 €/sqm", 18, 17), // Support both new (18) and old (17) positions
                     };
                     // Optional Year column (either as index 18 or by header name). Default to current year if missing/invalid
                     try
@@ -70,9 +71,9 @@ namespace CostsViewer.Services
                                 year = SafeParseInt(csv.GetField(yearIndex));
                             }
                         }
-                        if (year == 0 && csv.Parser.Count > 18)
+                        if (year == 0 && csv.Parser.Count > 19)
                         {
-                            year = SafeParseInt(csv.GetField(18));
+                            year = SafeParseInt(csv.GetField(19));
                         }
                         rec.Year = year > 0 ? year : DateTime.Now.Year;
                     }
@@ -126,6 +127,33 @@ namespace CostsViewer.Services
         {
             if (string.IsNullOrWhiteSpace(field)) return 0;
             return int.TryParse(field.Trim(), out var v) ? v : 0;
+        }
+
+        private static int TryGetCost(CsvReader csv, string headerName, params int[] possibleIndices)
+        {
+            try
+            {
+                // Prefer header lookup if available
+                if (csv.HeaderRecord != null)
+                {
+                    var headers = csv.HeaderRecord.Select(h => h?.Trim() ?? string.Empty).ToArray();
+                    var idx = Array.FindIndex(headers, h => string.Equals(h, headerName, StringComparison.OrdinalIgnoreCase) || string.Equals(h, headerName.Replace(" €/sqm", string.Empty), StringComparison.OrdinalIgnoreCase));
+                    if (idx >= 0)
+                    {
+                        return SafeParseInt(csv.GetField(idx));
+                    }
+                }
+                // Fallback by position
+                foreach (var idx in possibleIndices)
+                {
+                    if (csv.Parser.Count > idx)
+                    {
+                        return SafeParseInt(csv.GetField(idx));
+                    }
+                }
+            }
+            catch { }
+            return 0;
         }
     }
 }

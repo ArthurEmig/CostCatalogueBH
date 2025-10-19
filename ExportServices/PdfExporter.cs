@@ -17,7 +17,7 @@ namespace CostsViewer.ExportServices
             {
                 // Set encoding to ensure compatibility
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-                
+
                 var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                 var file = Path.Combine(desktop, $"Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.pdf");
 
@@ -25,7 +25,7 @@ namespace CostsViewer.ExportServices
                 var page = doc.AddPage();
                 page.Orientation = PdfSharp.PageOrientation.Landscape; // Set to landscape orientation
                 var gfx = XGraphics.FromPdfPage(page);
-                
+
                 // Use normal font sizes since we have landscape orientation
                 XFont font;
                 XFont boldFont;
@@ -40,9 +40,9 @@ namespace CostsViewer.ExportServices
                     font = new XFont("Times New Roman", 11, XFontStyle.Regular);
                     boldFont = new XFont("Times New Roman", 11, XFontStyle.Bold);
                 }
-                
+
                 double y = 40;
-            
+
                 // Create title font with fallback
                 XFont titleFont;
                 try
@@ -53,7 +53,7 @@ namespace CostsViewer.ExportServices
                 {
                     titleFont = new XFont("Times New Roman", 18, XFontStyle.Bold);
                 }
-                
+
                 gfx.DrawString("Costs Export", titleFont, XBrushes.Black, new XPoint(40, y));
             y += 30;
             gfx.DrawString($"Included records: {records.Count}", font, XBrushes.Black, new XPoint(40, y));
@@ -71,7 +71,7 @@ namespace CostsViewer.ExportServices
                 {
                     sectionFont = new XFont("Times New Roman", 14, XFontStyle.Bold);
                 }
-                
+
                 gfx.DrawString("Cost Group Summary (DIN 276):", sectionFont, XBrushes.Black, new XPoint(40, y));
             y += 25;
 
@@ -94,7 +94,7 @@ namespace CostsViewer.ExportServices
                 gfx.DrawString($"{summary.MaxCost:F2}", font, XBrushes.Black, new XPoint(620, y));
                 gfx.DrawString($"{summary.StandardDeviation:F2}", font, XBrushes.Black, new XPoint(720, y));
                 y += 16;
-                
+
                 if (y > page.Height - 80)
                 {
                     page = doc.AddPage();
@@ -108,18 +108,19 @@ namespace CostsViewer.ExportServices
 
                 // Legacy averages section for backward compatibility
                 string[] labels = {
-                    "KG220 (Site Prep)", 
-                    "KG230 (Earthworks)", 
-                    "KG410 (Water/Gas)", 
-                    "KG420 (Heating)", 
-                    "KG434 (Process)", 
-                    "KG430 (HVAC)", 
-                    "KG440 (Electrical)", 
-                    "KG450 (Comm/Safety)", 
-                    "KG460 (Conveying)", 
-                    "KG474 (Fire Protection)", 
-                    "KG475 (Security/Access)", 
-                    "KG480 (Automation)", 
+                    "KG220 (Site Prep)",
+                    "KG230 (Earthworks)",
+                    "KG410 (Water/Gas)",
+                    "KG420 (Heating)",
+                    "KG434 (Process)",
+                    "KG430 (HVAC)",
+                    "KG440 (Electrical)",
+                    "KG450 (Comm/Safety)",
+                    "KG460 (Conveying)",
+                    "KG490 (Other Tech)",
+                    "KG474 (Fire Protection)",
+                    "KG475 (Security/Access)",
+                    "KG480 (Automation)",
                     "KG550 (Outdoor Tech)"
                 };
                 gfx.DrawString("Overall Averages (DIN 276):", sectionFont, XBrushes.Black, new XPoint(40, y));
@@ -128,7 +129,7 @@ namespace CostsViewer.ExportServices
             {
                 gfx.DrawString($"Average {labels[i]}: {avgKgs[i]:F2} €/sqm", font, XBrushes.Black, new XPoint(40, y));
                 y += 18;
-                
+
                 if (y > page.Height - 80)
                 {
                     page = doc.AddPage();
@@ -163,7 +164,7 @@ namespace CostsViewer.ExportServices
             {
                 Console.WriteLine($"PDF Export Error: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                
+
                 // Try to create a simple text-based PDF as fallback
                 try
                 {
@@ -186,25 +187,25 @@ namespace CostsViewer.ExportServices
             var page = doc.AddPage();
             page.Orientation = PageOrientation.Landscape; // Landscape for fallback too
             var gfx = XGraphics.FromPdfPage(page);
-            
+
             // Use the most basic font possible
             var font = new XFont("Courier", 10);
             double y = 40;
-            
+
             gfx.DrawString("Costs Export (Fallback Mode)", font, XBrushes.Black, new XPoint(40, y));
             y += 20;
             gfx.DrawString($"Records: {records.Count}, Average Area: {avgArea:F1} sqm", font, XBrushes.Black, new XPoint(40, y));
             y += 20;
-            
+
             gfx.DrawString("Cost Group Summary:", font, XBrushes.Black, new XPoint(40, y));
             y += 15;
-            
+
             foreach (var summary in costGroupSummary)
             {
                 var line = $"{summary.CostGroup}: Avg={summary.AverageCost:F0}, Min={summary.MinCost:F0}, Max={summary.MaxCost:F0}";
                 gfx.DrawString(line, font, XBrushes.Black, new XPoint(40, y));
                 y += 12;
-                
+
                 if (y > page.Height - 40)
                 {
                     page = doc.AddPage();
@@ -213,11 +214,9 @@ namespace CostsViewer.ExportServices
                     y = 40;
                 }
             }
-            
+
             doc.Save(file);
             Console.WriteLine($"Fallback PDF exported successfully to: {file}");
         }
     }
 }
-
-
