@@ -17,13 +17,13 @@ namespace CostsViewer.ExportServices
             var file = Path.Combine(desktop, $"Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.xlsx");
 
             using var wb = new XLWorkbook();
-            
+
             // Create Projects worksheet
             var projectsWs = wb.AddWorksheet("Projects");
 
             string[] headers = {
                 "Include","Project ID","Title","Types","Area",
-                "KG220 €/sqm","KG230 €/sqm","KG410 €/sqm","KG420 €/sqm","KG434 €/sqm","KG430 €/sqm","KG440 €/sqm","KG450 €/sqm","KG460 €/sqm","KG474 €/sqm","KG475 €/sqm","KG480 €/sqm","KG550 €/sqm"
+                "KG220 €/sqm","KG230 €/sqm","KG410 €/sqm","KG420 €/sqm","KG434 €/sqm","KG430 €/sqm","KG440 €/sqm","KG450 €/sqm","KG460 €/sqm","KG474 €/sqm","KG475 €/sqm","KG480 €/sqm","KG550 €/sqm","Year"
             };
             for (int i = 0; i < headers.Length; i++) projectsWs.Cell(1, i + 1).Value = headers[i];
 
@@ -48,6 +48,7 @@ namespace CostsViewer.ExportServices
                 projectsWs.Cell(r,16).Value = p.CostPerSqmKG475;
                 projectsWs.Cell(r,17).Value = p.CostPerSqmKG480;
                 projectsWs.Cell(r,18).Value = p.CostPerSqmKG550;
+                projectsWs.Cell(r,19).Value = p.Year;
                 r++;
             }
 
@@ -55,7 +56,7 @@ namespace CostsViewer.ExportServices
 
             // Create Summary worksheet
             var summaryWs = wb.AddWorksheet("Cost Group Summary (DIN 276)");
-            
+
             string[] summaryHeaders = {
                 "Cost Group", "Description", "Average €/sqm", "Min €/sqm", "Max €/sqm", "Standard Deviation"
             };
@@ -80,7 +81,7 @@ namespace CostsViewer.ExportServices
 
             // Format the summary worksheet
             summaryWs.Columns().AdjustToContents();
-            
+
             // Add borders to the summary table
             if (costGroupSummary.Count > 0)
             {
@@ -90,7 +91,7 @@ namespace CostsViewer.ExportServices
             }
 
             wb.SaveAs(file);
-            
+
             // Also export as CSV for consistency with import format
             ExportCsv(records);
         }
@@ -103,9 +104,9 @@ namespace CostsViewer.ExportServices
             var file = Path.Combine(desktop, $"CSV_Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.csv");
 
             var csv = new StringBuilder();
-            
+
             // Add header row matching the import format
-            csv.AppendLine("Include,Project ID,Title,Types,Area,KG220 €/sqm,KG230 €/sqm,KG410 €/sqm,KG420 €/sqm,KG434 €/sqm,KG430 €/sqm,KG440 €/sqm,KG450 €/sqm,KG460 €/sqm,KG474 €/sqm,KG475 €/sqm,KG480 €/sqm,KG550 €/sqm");
+            csv.AppendLine("Include,Project ID,Title,Types,Area,KG220 €/sqm,KG230 €/sqm,KG410 €/sqm,KG420 €/sqm,KG434 €/sqm,KG430 €/sqm,KG440 €/sqm,KG450 €/sqm,KG460 €/sqm,KG474 €/sqm,KG475 €/sqm,KG480 €/sqm,KG550 €/sqm,Year");
 
             // Add data rows
             foreach (var record in records)
@@ -117,12 +118,10 @@ namespace CostsViewer.ExportServices
                     typesString = $"\"{typesString}\"";
                 }
 
-                csv.AppendLine($"{(record.Include ? "TRUE" : "FALSE")},{record.ProjectId},{record.ProjectTitle},{typesString},{record.TotalArea},{record.CostPerSqmKG220},{record.CostPerSqmKG230},{record.CostPerSqmKG410},{record.CostPerSqmKG420},{record.CostPerSqmKG434},{record.CostPerSqmKG430},{record.CostPerSqmKG440},{record.CostPerSqmKG450},{record.CostPerSqmKG460},{record.CostPerSqmKG474},{record.CostPerSqmKG475},{record.CostPerSqmKG480},{record.CostPerSqmKG550}");
+                csv.AppendLine($"{(record.Include ? "TRUE" : "FALSE")},{record.ProjectId},{record.ProjectTitle},{typesString},{record.TotalArea},{record.CostPerSqmKG220},{record.CostPerSqmKG230},{record.CostPerSqmKG410},{record.CostPerSqmKG420},{record.CostPerSqmKG434},{record.CostPerSqmKG430},{record.CostPerSqmKG440},{record.CostPerSqmKG450},{record.CostPerSqmKG460},{record.CostPerSqmKG474},{record.CostPerSqmKG475},{record.CostPerSqmKG480},{record.CostPerSqmKG550},{record.Year}");
             }
 
             File.WriteAllText(file, csv.ToString(), Encoding.UTF8);
         }
     }
 }
-
-

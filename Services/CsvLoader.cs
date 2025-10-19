@@ -57,6 +57,29 @@ namespace CostsViewer.Services
                         CostPerSqmKG480 = csv.GetField<int>(16),       // Column 16: KG480
                         CostPerSqmKG550 = csv.GetField<int>(17),       // Column 17: KG550
                     };
+                    // Optional Year column (either as index 18 or by header name). Default to current year if missing/invalid
+                    try
+                    {
+                        int year = 0;
+                        if (csv.HeaderRecord != null)
+                        {
+                            var headers = csv.HeaderRecord.Select(h => h?.Trim() ?? string.Empty).ToArray();
+                            var yearIndex = Array.FindIndex(headers, h => string.Equals(h, "Year", StringComparison.OrdinalIgnoreCase) || string.Equals(h, "Year of cost calculation", StringComparison.OrdinalIgnoreCase));
+                            if (yearIndex >= 0)
+                            {
+                                year = SafeParseInt(csv.GetField(yearIndex));
+                            }
+                        }
+                        if (year == 0 && csv.Parser.Count > 18)
+                        {
+                            year = SafeParseInt(csv.GetField(18));
+                        }
+                        rec.Year = year > 0 ? year : DateTime.Now.Year;
+                    }
+                    catch
+                    {
+                        rec.Year = DateTime.Now.Year;
+                    }
                     records.Add(rec);
                 }
                 catch (Exception ex)
@@ -71,7 +94,7 @@ namespace CostsViewer.Services
         private static bool ParseBooleanField(string? field)
         {
             if (string.IsNullOrWhiteSpace(field)) return false;
-            
+
             // Handle TRUE/FALSE, true/false, 1/0, yes/no
             return field.Trim().ToUpperInvariant() switch
             {
@@ -88,17 +111,21 @@ namespace CostsViewer.Services
         private static List<string> ParseTypes(string? raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return new List<string>();
-            
+
             // Remove surrounding quotes if present
             raw = raw.Trim().Trim('"');
-            
+
             // Split by comma and clean up each type
             return raw.Split(',', StringSplitOptions.RemoveEmptyEntries)
                       .Select(s => s.Trim())
                       .Where(s => !string.IsNullOrEmpty(s))
                       .ToList();
         }
+
+        private static int SafeParseInt(string? field)
+        {
+            if (string.IsNullOrWhiteSpace(field)) return 0;
+            return int.TryParse(field.Trim(), out var v) ? v : 0;
+        }
     }
 }
-
-

@@ -17,7 +17,7 @@ namespace CostsViewer.Services
 
             using var workbook = new XLWorkbook(filePath);
             var worksheet = workbook.Worksheets.FirstOrDefault();
-            
+
             if (worksheet == null)
                 throw new InvalidOperationException("No worksheets found in the Excel file.");
 
@@ -55,6 +55,37 @@ namespace CostsViewer.Services
                         CostPerSqmKG480 = ParseIntField(row.Cell(17).GetString()),// Column Q: KG480
                         CostPerSqmKG550 = ParseIntField(row.Cell(18).GetString()),// Column R: KG550
                     };
+                    // Optional Year column at the end (Column 19 / S) or by header name
+                    try
+                    {
+                        int year = 0;
+                        // Try by position first if there are more than 18 columns
+                        if (row.Cell(19) != null && !row.Cell(19).IsEmpty())
+                        {
+                            year = ParseIntField(row.Cell(19).GetString());
+                        }
+
+                        // If still zero, try header lookup
+                        if (year == 0)
+                        {
+                            var headerRow = worksheet.Row(1);
+                            int lastCell = headerRow.LastCellUsed().Address.ColumnNumber;
+                            for (int c = 1; c <= lastCell; c++)
+                            {
+                                var header = headerRow.Cell(c).GetString()?.Trim();
+                                if (string.Equals(header, "Year", StringComparison.OrdinalIgnoreCase) || string.Equals(header, "Year of cost calculation", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    year = ParseIntField(row.Cell(c).GetString());
+                                    break;
+                                }
+                            }
+                        }
+                        rec.Year = year > 0 ? year : DateTime.Now.Year;
+                    }
+                    catch
+                    {
+                        rec.Year = DateTime.Now.Year;
+                    }
                     records.Add(rec);
                 }
                 catch (Exception ex)
@@ -70,7 +101,7 @@ namespace CostsViewer.Services
         private static bool ParseBooleanField(string? field)
         {
             if (string.IsNullOrWhiteSpace(field)) return false;
-            
+
             // Handle TRUE/FALSE, true/false, 1/0, yes/no
             return field.Trim().ToUpperInvariant() switch
             {
@@ -87,7 +118,7 @@ namespace CostsViewer.Services
         private static int ParseIntField(string? field)
         {
             if (string.IsNullOrWhiteSpace(field)) return 0;
-            
+
             // Try to parse as integer, return 0 if failed
             return int.TryParse(field.Trim(), out var result) ? result : 0;
         }
@@ -95,10 +126,10 @@ namespace CostsViewer.Services
         private static List<string> ParseTypes(string? raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return new List<string>();
-            
+
             // Remove surrounding quotes if present
             raw = raw.Trim().Trim('"');
-            
+
             // Split by comma and clean up each type
             return raw.Split(',', StringSplitOptions.RemoveEmptyEntries)
                       .Select(s => s.Trim())

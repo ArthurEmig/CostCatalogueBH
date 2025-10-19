@@ -37,8 +37,8 @@
             </Grid.ColumnDefinitions>
 
             <!-- Main content area with projects and summary -->
-            <ScrollViewer Grid.Column="0" 
-                          HorizontalScrollBarVisibility="Auto" 
+            <ScrollViewer Grid.Column="0"
+                          HorizontalScrollBarVisibility="Auto"
                           VerticalScrollBarVisibility="Auto"
                           Margin="8">
                 <Grid>
@@ -76,6 +76,7 @@
                             <DataGridTextColumn Header="KG475 €/sqm" Binding="{Binding CostPerSqmKG475}" Width="100"/>
                             <DataGridTextColumn Header="KG480 €/sqm" Binding="{Binding CostPerSqmKG480}" Width="100"/>
                             <DataGridTextColumn Header="KG550 €/sqm" Binding="{Binding CostPerSqmKG550}" Width="100"/>
+                            <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="80"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -83,7 +84,7 @@
                     <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Margin="0,4,0,0" Background="White">
                         <StackPanel Orientation="Vertical" Margin="4">
                             <TextBlock Text="Cost Group Summary (DIN 276)" FontWeight="Bold" FontSize="14" Margin="4,4,4,8" HorizontalAlignment="Center"/>
-                            
+
                             <!-- Summary Grid with columns matching the DataGrid above -->
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -141,7 +142,7 @@
 
                                 <!-- Count row -->
                                 <TextBlock Grid.Column="4" Grid.Row="1" Text="{Binding IncludedCount}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Count of included projects"/>
-                                
+
                                 <!-- Area column -->
                                 <TextBlock Grid.Column="4" Grid.Row="2" Text="{Binding AverageArea, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average Area"/>
 
@@ -149,62 +150,62 @@
                                 <TextBlock Grid.Column="5" Grid.Row="2" Text="{Binding AverageKG220, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG220"/>
                                 <TextBlock Grid.Column="5" Grid.Row="3" Text="{Binding MinKG220, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG220"/>
                                 <TextBlock Grid.Column="5" Grid.Row="4" Text="{Binding MaxKG220, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG220"/>
-                                
+
                                 <!-- KG230 column -->
                                 <TextBlock Grid.Column="6" Grid.Row="2" Text="{Binding AverageKG230, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG230"/>
                                 <TextBlock Grid.Column="6" Grid.Row="3" Text="{Binding MinKG230, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG230"/>
                                 <TextBlock Grid.Column="6" Grid.Row="4" Text="{Binding MaxKG230, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG230"/>
-                                
+
                                 <!-- KG410 column -->
                                 <TextBlock Grid.Column="7" Grid.Row="2" Text="{Binding AverageKG410, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG410"/>
                                 <TextBlock Grid.Column="7" Grid.Row="3" Text="{Binding MinKG410, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG410"/>
                                 <TextBlock Grid.Column="7" Grid.Row="4" Text="{Binding MaxKG410, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG410"/>
-                                
+
                                 <!-- KG420 column -->
                                 <TextBlock Grid.Column="8" Grid.Row="2" Text="{Binding AverageKG420, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG420"/>
                                 <TextBlock Grid.Column="8" Grid.Row="3" Text="{Binding MinKG420, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG420"/>
                                 <TextBlock Grid.Column="8" Grid.Row="4" Text="{Binding MaxKG420, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG420"/>
-                                
+
                                 <!-- KG430 column -->
                                 <TextBlock Grid.Column="9" Grid.Row="2" Text="{Binding AverageKG430, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG430"/>
                                 <TextBlock Grid.Column="9" Grid.Row="3" Text="{Binding MinKG430, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG430"/>
                                 <TextBlock Grid.Column="9" Grid.Row="4" Text="{Binding MaxKG430, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG430"/>
-                                
+
                                 <!-- KG434 column -->
                                 <TextBlock Grid.Column="10" Grid.Row="2" Text="{Binding AverageKG434, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG434"/>
                                 <TextBlock Grid.Column="10" Grid.Row="3" Text="{Binding MinKG434, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG434"/>
                                 <TextBlock Grid.Column="10" Grid.Row="4" Text="{Binding MaxKG434, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG434"/>
-                                
+
                                 <!-- KG440 column -->
                                 <TextBlock Grid.Column="11" Grid.Row="2" Text="{Binding AverageKG440, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG440"/>
                                 <TextBlock Grid.Column="11" Grid.Row="3" Text="{Binding MinKG440, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG440"/>
                                 <TextBlock Grid.Column="11" Grid.Row="4" Text="{Binding MaxKG440, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG440"/>
-                                
+
                                 <!-- KG450 column -->
                                 <TextBlock Grid.Column="12" Grid.Row="2" Text="{Binding AverageKG450, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG450"/>
                                 <TextBlock Grid.Column="12" Grid.Row="3" Text="{Binding MinKG450, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG450"/>
                                 <TextBlock Grid.Column="12" Grid.Row="4" Text="{Binding MaxKG450, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG450"/>
-                                
+
                                 <!-- KG460 column -->
                                 <TextBlock Grid.Column="13" Grid.Row="2" Text="{Binding AverageKG460, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG460"/>
                                 <TextBlock Grid.Column="13" Grid.Row="3" Text="{Binding MinKG460, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG460"/>
                                 <TextBlock Grid.Column="13" Grid.Row="4" Text="{Binding MaxKG460, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG460"/>
-                                
+
                                 <!-- KG474 column -->
                                 <TextBlock Grid.Column="14" Grid.Row="2" Text="{Binding AverageKG474, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG474"/>
                                 <TextBlock Grid.Column="14" Grid.Row="3" Text="{Binding MinKG474, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG474"/>
                                 <TextBlock Grid.Column="14" Grid.Row="4" Text="{Binding MaxKG474, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG474"/>
-                                
+
                                 <!-- KG475 column -->
                                 <TextBlock Grid.Column="15" Grid.Row="2" Text="{Binding AverageKG475, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG475"/>
                                 <TextBlock Grid.Column="15" Grid.Row="3" Text="{Binding MinKG475, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG475"/>
                                 <TextBlock Grid.Column="15" Grid.Row="4" Text="{Binding MaxKG475, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG475"/>
-                                
+
                                 <!-- KG480 column -->
                                 <TextBlock Grid.Column="16" Grid.Row="2" Text="{Binding AverageKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG480"/>
                                 <TextBlock Grid.Column="16" Grid.Row="3" Text="{Binding MinKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG480"/>
                                 <TextBlock Grid.Column="16" Grid.Row="4" Text="{Binding MaxKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Max KG480"/>
-                                
+
                                 <!-- KG550 column -->
                                 <TextBlock Grid.Column="17" Grid.Row="2" Text="{Binding AverageKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Average KG550"/>
                                 <TextBlock Grid.Column="17" Grid.Row="3" Text="{Binding MinKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Min KG550"/>
@@ -273,4 +274,3 @@
         </Grid>
     </DockPanel>
 </Window>
-

@@ -17,6 +17,7 @@ namespace CostsViewer.Models
         public string ProjectId { get; set; } = string.Empty;
         public string ProjectTitle { get; set; } = string.Empty;
         public List<string> ProjectTypes { get; set; } = new();
+        public int Year { get; set; }
         public int TotalArea { get; set; }
 
         public int CostPerSqmKG220 { get; set; }
@@ -42,5 +43,3 @@ namespace CostsViewer.Models
         }
     }
 }
-
-
