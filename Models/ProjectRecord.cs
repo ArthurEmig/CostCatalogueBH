@@ -11,7 +11,15 @@ namespace CostsViewer.Models
         public bool Include
         {
             get => _include;
-            set { _include = value; OnPropertyChanged(); }
+            set 
+            { 
+                if (_include != value)
+                {
+                    _include = value; 
+                    System.Console.WriteLine($"ProjectRecord {ProjectId}: Include changed to {value}");
+                    OnPropertyChanged(); 
+                }
+            }
         }
 
         public string ProjectId { get; set; } = string.Empty;

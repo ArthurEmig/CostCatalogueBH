@@ -145,12 +145,15 @@ namespace CostsViewer.ViewModels
 
         private void OnProjectPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            Console.WriteLine($"OnProjectPropertyChanged: PropertyName = {e.PropertyName}");
             if (e.PropertyName == nameof(ProjectRecord.Include))
             {
                 var project = sender as ProjectRecord;
                 Console.WriteLine($"OnProjectPropertyChanged: Project {project?.ProjectId} Include changed to {project?.Include}");
+                Console.WriteLine("OnProjectPropertyChanged: Calling UpdateAverages()");
                 UpdateAverages();
                 OnPropertyChanged(nameof(IncludedCount));
+                Console.WriteLine("OnProjectPropertyChanged: Completed");
             }
         }
 
@@ -324,68 +327,181 @@ namespace CostsViewer.ViewModels
 
         private double _averageArea;
         public double AverageArea { get => _averageArea; private set { _averageArea = value; OnPropertyChanged(); } }
-        public double AverageKG220 { get; private set; }
-        public double AverageKG230 { get; private set; }
-        public double AverageKG410 { get; private set; }
-        public double AverageKG420 { get; private set; }
-        public double AverageKG434 { get; private set; }
-        public double AverageKG430 { get; private set; }
-        public double AverageKG440 { get; private set; }
-        public double AverageKG450 { get; private set; }
-        public double AverageKG460 { get; private set; }
-        public double AverageKG490 { get; private set; }
-        public double AverageKG474 { get; private set; }
-        public double AverageKG475 { get; private set; }
-        public double AverageKG480 { get; private set; }
-        public double AverageKG550 { get; private set; }
+        
+        private double _averageKG220;
+        public double AverageKG220 { get => _averageKG220; private set { 
+            Console.WriteLine($"AverageKG220 setter: {_averageKG220} -> {value}"); 
+            _averageKG220 = value; 
+            OnPropertyChanged(); 
+        } }
+        
+        private double _averageKG230;
+        public double AverageKG230 { get => _averageKG230; private set { _averageKG230 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG410;
+        public double AverageKG410 { get => _averageKG410; private set { _averageKG410 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG420;
+        public double AverageKG420 { get => _averageKG420; private set { _averageKG420 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG434;
+        public double AverageKG434 { get => _averageKG434; private set { _averageKG434 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG430;
+        public double AverageKG430 { get => _averageKG430; private set { _averageKG430 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG440;
+        public double AverageKG440 { get => _averageKG440; private set { _averageKG440 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG450;
+        public double AverageKG450 { get => _averageKG450; private set { _averageKG450 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG460;
+        public double AverageKG460 { get => _averageKG460; private set { _averageKG460 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG490;
+        public double AverageKG490 { get => _averageKG490; private set { _averageKG490 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG474;
+        public double AverageKG474 { get => _averageKG474; private set { _averageKG474 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG475;
+        public double AverageKG475 { get => _averageKG475; private set { _averageKG475 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG480;
+        public double AverageKG480 { get => _averageKG480; private set { _averageKG480 = value; OnPropertyChanged(); } }
+        
+        private double _averageKG550;
+        public double AverageKG550 { get => _averageKG550; private set { _averageKG550 = value; OnPropertyChanged(); } }
 
         // Min values for each cost group
-        public double MinKG220 { get; private set; }
-        public double MinKG230 { get; private set; }
-        public double MinKG410 { get; private set; }
-        public double MinKG420 { get; private set; }
-        public double MinKG434 { get; private set; }
-        public double MinKG430 { get; private set; }
-        public double MinKG440 { get; private set; }
-        public double MinKG450 { get; private set; }
-        public double MinKG460 { get; private set; }
-        public double MinKG490 { get; private set; }
-        public double MinKG474 { get; private set; }
-        public double MinKG475 { get; private set; }
-        public double MinKG480 { get; private set; }
-        public double MinKG550 { get; private set; }
+        private double _minKG220;
+        public double MinKG220 { get => _minKG220; private set { _minKG220 = value; OnPropertyChanged(); } }
+        
+        private double _minKG230;
+        public double MinKG230 { get => _minKG230; private set { _minKG230 = value; OnPropertyChanged(); } }
+        
+        private double _minKG410;
+        public double MinKG410 { get => _minKG410; private set { _minKG410 = value; OnPropertyChanged(); } }
+        
+        private double _minKG420;
+        public double MinKG420 { get => _minKG420; private set { _minKG420 = value; OnPropertyChanged(); } }
+        
+        private double _minKG434;
+        public double MinKG434 { get => _minKG434; private set { _minKG434 = value; OnPropertyChanged(); } }
+        
+        private double _minKG430;
+        public double MinKG430 { get => _minKG430; private set { _minKG430 = value; OnPropertyChanged(); } }
+        
+        private double _minKG440;
+        public double MinKG440 { get => _minKG440; private set { _minKG440 = value; OnPropertyChanged(); } }
+        
+        private double _minKG450;
+        public double MinKG450 { get => _minKG450; private set { _minKG450 = value; OnPropertyChanged(); } }
+        
+        private double _minKG460;
+        public double MinKG460 { get => _minKG460; private set { _minKG460 = value; OnPropertyChanged(); } }
+        
+        private double _minKG490;
+        public double MinKG490 { get => _minKG490; private set { _minKG490 = value; OnPropertyChanged(); } }
+        
+        private double _minKG474;
+        public double MinKG474 { get => _minKG474; private set { _minKG474 = value; OnPropertyChanged(); } }
+        
+        private double _minKG475;
+        public double MinKG475 { get => _minKG475; private set { _minKG475 = value; OnPropertyChanged(); } }
+        
+        private double _minKG480;
+        public double MinKG480 { get => _minKG480; private set { _minKG480 = value; OnPropertyChanged(); } }
+        
+        private double _minKG550;
+        public double MinKG550 { get => _minKG550; private set { _minKG550 = value; OnPropertyChanged(); } }
 
         // Max values for each cost group
-        public double MaxKG220 { get; private set; }
-        public double MaxKG230 { get; private set; }
-        public double MaxKG410 { get; private set; }
-        public double MaxKG420 { get; private set; }
-        public double MaxKG434 { get; private set; }
-        public double MaxKG430 { get; private set; }
-        public double MaxKG440 { get; private set; }
-        public double MaxKG450 { get; private set; }
-        public double MaxKG460 { get; private set; }
-        public double MaxKG490 { get; private set; }
-        public double MaxKG474 { get; private set; }
-        public double MaxKG475 { get; private set; }
-        public double MaxKG480 { get; private set; }
-        public double MaxKG550 { get; private set; }
+        private double _maxKG220;
+        public double MaxKG220 { get => _maxKG220; private set { _maxKG220 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG230;
+        public double MaxKG230 { get => _maxKG230; private set { _maxKG230 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG410;
+        public double MaxKG410 { get => _maxKG410; private set { _maxKG410 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG420;
+        public double MaxKG420 { get => _maxKG420; private set { _maxKG420 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG434;
+        public double MaxKG434 { get => _maxKG434; private set { _maxKG434 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG430;
+        public double MaxKG430 { get => _maxKG430; private set { _maxKG430 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG440;
+        public double MaxKG440 { get => _maxKG440; private set { _maxKG440 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG450;
+        public double MaxKG450 { get => _maxKG450; private set { _maxKG450 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG460;
+        public double MaxKG460 { get => _maxKG460; private set { _maxKG460 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG490;
+        public double MaxKG490 { get => _maxKG490; private set { _maxKG490 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG474;
+        public double MaxKG474 { get => _maxKG474; private set { _maxKG474 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG475;
+        public double MaxKG475 { get => _maxKG475; private set { _maxKG475 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG480;
+        public double MaxKG480 { get => _maxKG480; private set { _maxKG480 = value; OnPropertyChanged(); } }
+        
+        private double _maxKG550;
+        public double MaxKG550 { get => _maxKG550; private set { _maxKG550 = value; OnPropertyChanged(); } }
 
         // Standard Deviation values for each cost group
-        public double StdDevKG220 { get; private set; }
-        public double StdDevKG230 { get; private set; }
-        public double StdDevKG410 { get; private set; }
-        public double StdDevKG420 { get; private set; }
-        public double StdDevKG434 { get; private set; }
-        public double StdDevKG430 { get; private set; }
-        public double StdDevKG440 { get; private set; }
-        public double StdDevKG450 { get; private set; }
-        public double StdDevKG460 { get; private set; }
-        public double StdDevKG490 { get; private set; }
-        public double StdDevKG474 { get; private set; }
-        public double StdDevKG475 { get; private set; }
-        public double StdDevKG480 { get; private set; }
-        public double StdDevKG550 { get; private set; }
+        private double _stdDevKG220;
+        public double StdDevKG220 { get => _stdDevKG220; private set { _stdDevKG220 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG230;
+        public double StdDevKG230 { get => _stdDevKG230; private set { _stdDevKG230 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG410;
+        public double StdDevKG410 { get => _stdDevKG410; private set { _stdDevKG410 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG420;
+        public double StdDevKG420 { get => _stdDevKG420; private set { _stdDevKG420 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG434;
+        public double StdDevKG434 { get => _stdDevKG434; private set { _stdDevKG434 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG430;
+        public double StdDevKG430 { get => _stdDevKG430; private set { _stdDevKG430 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG440;
+        public double StdDevKG440 { get => _stdDevKG440; private set { _stdDevKG440 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG450;
+        public double StdDevKG450 { get => _stdDevKG450; private set { _stdDevKG450 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG460;
+        public double StdDevKG460 { get => _stdDevKG460; private set { _stdDevKG460 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG490;
+        public double StdDevKG490 { get => _stdDevKG490; private set { _stdDevKG490 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG474;
+        public double StdDevKG474 { get => _stdDevKG474; private set { _stdDevKG474 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG475;
+        public double StdDevKG475 { get => _stdDevKG475; private set { _stdDevKG475 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG480;
+        public double StdDevKG480 { get => _stdDevKG480; private set { _stdDevKG480 = value; OnPropertyChanged(); } }
+        
+        private double _stdDevKG550;
+        public double StdDevKG550 { get => _stdDevKG550; private set { _stdDevKG550 = value; OnPropertyChanged(); } }
 
         private void UpdateAverages()
         {
@@ -477,65 +593,7 @@ namespace CostsViewer.ViewModels
                 Console.WriteLine($"UpdateAverages: Calculated - Area: {AverageArea:F2}, KG220: Avg={AverageKG220:F2}, Min={MinKG220:F2}, Max={MaxKG220:F2}, StdDev={StdDevKG220:F2}");
             }
 
-            OnPropertyChanged(nameof(AverageKG220));
-            OnPropertyChanged(nameof(AverageKG230));
-            OnPropertyChanged(nameof(AverageKG410));
-            OnPropertyChanged(nameof(AverageKG420));
-            OnPropertyChanged(nameof(AverageKG434));
-            OnPropertyChanged(nameof(AverageKG430));
-            OnPropertyChanged(nameof(AverageKG440));
-            OnPropertyChanged(nameof(AverageKG450));
-            OnPropertyChanged(nameof(AverageKG460));
-            OnPropertyChanged(nameof(AverageKG474));
-            OnPropertyChanged(nameof(AverageKG490));
-            OnPropertyChanged(nameof(AverageKG475));
-            OnPropertyChanged(nameof(AverageKG480));
-            OnPropertyChanged(nameof(AverageKG550));
-
-            OnPropertyChanged(nameof(MinKG220));
-            OnPropertyChanged(nameof(MinKG230));
-            OnPropertyChanged(nameof(MinKG410));
-            OnPropertyChanged(nameof(MinKG420));
-            OnPropertyChanged(nameof(MinKG434));
-            OnPropertyChanged(nameof(MinKG430));
-            OnPropertyChanged(nameof(MinKG440));
-            OnPropertyChanged(nameof(MinKG450));
-            OnPropertyChanged(nameof(MinKG460));
-            OnPropertyChanged(nameof(MinKG474));
-            OnPropertyChanged(nameof(MinKG490));
-            OnPropertyChanged(nameof(MinKG475));
-            OnPropertyChanged(nameof(MinKG480));
-            OnPropertyChanged(nameof(MinKG550));
-
-            OnPropertyChanged(nameof(MaxKG220));
-            OnPropertyChanged(nameof(MaxKG230));
-            OnPropertyChanged(nameof(MaxKG410));
-            OnPropertyChanged(nameof(MaxKG420));
-            OnPropertyChanged(nameof(MaxKG434));
-            OnPropertyChanged(nameof(MaxKG430));
-            OnPropertyChanged(nameof(MaxKG440));
-            OnPropertyChanged(nameof(MaxKG450));
-            OnPropertyChanged(nameof(MaxKG460));
-            OnPropertyChanged(nameof(MaxKG474));
-            OnPropertyChanged(nameof(MaxKG490));
-            OnPropertyChanged(nameof(MaxKG475));
-            OnPropertyChanged(nameof(MaxKG480));
-            OnPropertyChanged(nameof(MaxKG550));
-
-            OnPropertyChanged(nameof(StdDevKG220));
-            OnPropertyChanged(nameof(StdDevKG230));
-            OnPropertyChanged(nameof(StdDevKG410));
-            OnPropertyChanged(nameof(StdDevKG420));
-            OnPropertyChanged(nameof(StdDevKG434));
-            OnPropertyChanged(nameof(StdDevKG430));
-            OnPropertyChanged(nameof(StdDevKG440));
-            OnPropertyChanged(nameof(StdDevKG450));
-            OnPropertyChanged(nameof(StdDevKG460));
-            OnPropertyChanged(nameof(StdDevKG474));
-            OnPropertyChanged(nameof(StdDevKG490));
-            OnPropertyChanged(nameof(StdDevKG475));
-            OnPropertyChanged(nameof(StdDevKG480));
-            OnPropertyChanged(nameof(StdDevKG550));
+            // Property change notifications are now handled automatically by the property setters
 
             UpdateCostGroupSummary();
             Console.WriteLine("UpdateAverages: Completed calculation and property notifications");

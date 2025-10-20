@@ -58,7 +58,7 @@
                               VerticalScrollBarVisibility="Hidden"
                               Margin="0,0,0,4">
                         <DataGrid.Columns>
-                            <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay}" Width="70"/>
+                            <DataGridCheckBoxColumn Header="Include" Binding="{Binding Include, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="70"/>
                             <DataGridTextColumn Header="Project ID" Binding="{Binding ProjectId}" Width="120"/>
                             <DataGridTextColumn Header="Title" Binding="{Binding ProjectTitle}" Width="200"/>
                             <DataGridTextColumn Header="Year" Binding="{Binding Year}" Width="80"/>
