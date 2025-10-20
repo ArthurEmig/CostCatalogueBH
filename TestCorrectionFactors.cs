@@ -1,45 +1,85 @@
 using System;
-using CostsViewer.Models;
+using System.IO;
+using System.Linq;
+using ClosedXML.Excel;
 using CostsViewer.Services;
 
 namespace CostsViewer
 {
     public class TestCorrectionFactors
     {
-        public static void TestExport()
+        public static void CreateSampleExcelFile()
         {
-            Console.WriteLine("=== Testing Correction Factors Export ===");
-            
-            // Load correction factor settings
-            var correctionFactorSettings = CorrectionFactorService.LoadSettings();
-            
-            // Test a few years
-            for (int year = 2020; year <= 2024; year++)
+            try
             {
-                var factor = correctionFactorSettings.GetFactorForYear(year);
-                Console.WriteLine($"Year {year}: Factor = {factor:F4}");
+                // Create a sample Excel file for testing
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "SampleCorrectionFactors.xlsx");
+                
+                using var workbook = new XLWorkbook();
+                var worksheet = workbook.Worksheets.Add("Correction Factors");
+
+                // Add headers
+                worksheet.Cell(1, 1).Value = "Year";
+                worksheet.Cell(1, 2).Value = "Correction Factor";
+
+                // Add sample data with inflation-like progression
+                var sampleData = new[]
+                {
+                    (1999, 1.0),
+                    (2000, 1.02),
+                    (2001, 1.04),
+                    (2002, 1.06),
+                    (2003, 1.08),
+                    (2004, 1.10),
+                    (2005, 1.12),
+                    (2010, 1.22),
+                    (2015, 1.32),
+                    (2020, 1.42),
+                    (2024, 1.50)
+                };
+
+                int row = 2;
+                foreach (var (year, factor) in sampleData)
+                {
+                    worksheet.Cell(row, 1).Value = year;
+                    worksheet.Cell(row, 2).Value = factor;
+                    row++;
+                }
+
+                // Format the worksheet
+                worksheet.Columns().AdjustToContents();
+                worksheet.Column(2).Style.NumberFormat.Format = "0.00";
+
+                workbook.SaveAs(filePath);
+                Console.WriteLine($"Sample Excel file created: {filePath}");
+
+                // Test the import functionality
+                var importedSettings = CorrectionFactorService.ImportFromExcel(filePath);
+                Console.WriteLine($"Successfully imported {importedSettings.YearFactors.Count} correction factors:");
+                
+                foreach (var kvp in importedSettings.YearFactors.OrderBy(x => x.Key))
+                {
+                    Console.WriteLine($"  {kvp.Key}: {kvp.Value:F2}");
+                }
             }
-            
-            // Test with a sample project
-            var testProject = new ProjectRecord
+            catch (Exception ex)
             {
-                ProjectId = "TEST001",
-                ProjectTitle = "Test Project",
-                Year = 2020,
-                CostPerSqmKG220 = 100,
-                CostPerSqmKG230 = 200,
-                CostPerSqmKG410 = 150
-            };
-            
-            var testFactor = correctionFactorSettings.GetFactorForYear(testProject.Year);
-            Console.WriteLine($"\nTest Project (Year {testProject.Year}):");
-            Console.WriteLine($"Correction Factor: {testFactor:F4}");
-            Console.WriteLine($"Original KG220: {testProject.CostPerSqmKG220}");
-            Console.WriteLine($"Corrected KG220: {Math.Round(testProject.CostPerSqmKG220 * testFactor, 2)}");
-            Console.WriteLine($"Original KG230: {testProject.CostPerSqmKG230}");
-            Console.WriteLine($"Corrected KG230: {Math.Round(testProject.CostPerSqmKG230 * testFactor, 2)}");
-            Console.WriteLine($"Original KG410: {testProject.CostPerSqmKG410}");
-            Console.WriteLine($"Corrected KG410: {Math.Round(testProject.CostPerSqmKG410 * testFactor, 2)}");
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        public static void TestTemplateCreation()
+        {
+            try
+            {
+                var templatePath = Path.Combine(Directory.GetCurrentDirectory(), "CorrectionFactors_Template.xlsx");
+                CorrectionFactorService.CreateExcelTemplate(templatePath);
+                Console.WriteLine($"Template created successfully: {templatePath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating template: {ex.Message}");
+            }
         }
     }
 }

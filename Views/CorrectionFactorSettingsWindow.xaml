@@ -49,28 +49,52 @@
         </ScrollViewer>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <Button Content="Reset to Default" 
-                    Command="{Binding ResetToDefaultCommand}" 
-                    Width="120" 
-                    Height="30" 
-                    Margin="0,0,10,0"/>
-            <Button Content="Apply Inflation" 
-                    Command="{Binding ApplyInflationCommand}" 
-                    Width="120" 
-                    Height="30" 
-                    Margin="0,0,10,0"/>
-            <Button Content="OK" 
-                    Command="{Binding OkCommand}" 
-                    Width="80" 
-                    Height="30" 
-                    Margin="0,0,10,0" 
-                    IsDefault="True"/>
-            <Button Content="Cancel" 
-                    Command="{Binding CancelCommand}" 
-                    Width="80" 
-                    Height="30" 
-                    IsCancel="True"/>
-        </StackPanel>
+        <Grid Grid.Row="2" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Left side buttons for Excel operations -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="Import from Excel" 
+                        Command="{Binding ImportFromExcelCommand}" 
+                        Width="130" 
+                        Height="30" 
+                        Margin="0,0,10,0"
+                        ToolTip="Import correction factors from an Excel file"/>
+                <Button Content="Export Template" 
+                        Command="{Binding ExportTemplateCommand}" 
+                        Width="120" 
+                        Height="30" 
+                        Margin="0,0,10,0"
+                        ToolTip="Create an Excel template with default correction factors"/>
+            </StackPanel>
+            
+            <!-- Right side buttons for actions -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Reset to Default" 
+                        Command="{Binding ResetToDefaultCommand}" 
+                        Width="120" 
+                        Height="30" 
+                        Margin="0,0,10,0"/>
+                <Button Content="Apply Inflation" 
+                        Command="{Binding ApplyInflationCommand}" 
+                        Width="120" 
+                        Height="30" 
+                        Margin="0,0,10,0"/>
+                <Button Content="OK" 
+                        Command="{Binding OkCommand}" 
+                        Width="80" 
+                        Height="30" 
+                        Margin="0,0,10,0" 
+                        IsDefault="True"/>
+                <Button Content="Cancel" 
+                        Command="{Binding CancelCommand}" 
+                        Width="80" 
+                        Height="30" 
+                        IsCancel="True"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

@@ -12,6 +12,18 @@ namespace CostsViewer.ExportServices
 {
     public static class PdfExporter
     {
+        private static string GetExportFolderPath()
+        {
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var exportFolder = Path.Combine(desktop, "Costs_App_Export_Files");
+            
+            if (!Directory.Exists(exportFolder))
+            {
+                Directory.CreateDirectory(exportFolder);
+            }
+            
+            return exportFolder;
+        }
         public static void Export(List<ProjectRecord> records, List<CostGroupSummary> costGroupSummary, double avgArea, params double[] avgKgs)
         {
             try
@@ -19,8 +31,8 @@ namespace CostsViewer.ExportServices
                 // Set encoding to ensure compatibility
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-                var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                var file = Path.Combine(desktop, $"Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.pdf");
+                var exportFolder = GetExportFolderPath();
+                var file = Path.Combine(exportFolder, $"Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.pdf");
 
                 // Load correction factor settings
                 var correctionFactorSettings = CorrectionFactorService.LoadSettings();
@@ -148,40 +160,6 @@ namespace CostsViewer.ExportServices
                 
                 y += 20;
 
-                // Legacy averages section for backward compatibility
-                string[] labels = {
-                    "KG220 (Site Prep)",
-                    "KG230 (Earthworks)",
-                    "KG410 (Water/Gas)",
-                    "KG420 (Heating)",
-                    "KG434 (Process)",
-                    "KG430 (HVAC)",
-                    "KG440 (Electrical)",
-                    "KG450 (Comm/Safety)",
-                    "KG460 (Conveying)",
-                    "KG490 (Other Tech)",
-                    "KG474 (Fire Protection)",
-                    "KG475 (Security/Access)",
-                    "KG480 (Automation)",
-                    "KG550 (Outdoor Tech)"
-                };
-                gfx.DrawString("Overall Averages (DIN 276):", sectionFont, XBrushes.Black, new XPoint(40, y));
-            y += 22;
-            for (int i = 0; i < Math.Min(labels.Length, avgKgs.Length); i++)
-            {
-                gfx.DrawString($"Average {labels[i]}: {avgKgs[i]:F0} €/sqm", font, XBrushes.Black, new XPoint(40, y));
-                y += 18;
-
-                if (y > page.Height - 80)
-                {
-                    page = doc.AddPage();
-                    page.Orientation = PageOrientation.Landscape; // Ensure new pages are also landscape
-                    gfx = XGraphics.FromPdfPage(page);
-                    y = 40;
-                }
-            }
-
-                y += 20;
                 gfx.DrawString("Projects:", sectionFont, XBrushes.Black, new XPoint(40, y));
                 y += 22;
                 foreach (var p in records)
@@ -223,8 +201,8 @@ namespace CostsViewer.ExportServices
 
         private static void CreateFallbackPdf(List<ProjectRecord> records, List<CostGroupSummary> costGroupSummary, double avgArea, double[] avgKgs)
         {
-            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            var file = Path.Combine(desktop, $"Costs_Export_Fallback_{DateTime.Now:yyyyMMdd_HHmm}.pdf");
+            var exportFolder = GetExportFolderPath();
+            var file = Path.Combine(exportFolder, $"Costs_Export_Fallback_{DateTime.Now:yyyyMMdd_HHmm}.pdf");
 
             using var doc = new PdfDocument();
             var page = doc.AddPage();

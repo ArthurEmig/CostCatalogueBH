@@ -4,7 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Microsoft.Win32;
+using System.Windows;
 using CostsViewer.Models;
+using CostsViewer.Services;
 
 namespace CostsViewer.ViewModels
 {
@@ -14,6 +17,8 @@ namespace CostsViewer.ViewModels
         
         public ICommand ResetToDefaultCommand { get; }
         public ICommand ApplyInflationCommand { get; }
+        public ICommand ImportFromExcelCommand { get; }
+        public ICommand ExportTemplateCommand { get; }
         public ICommand OkCommand { get; }
         public ICommand CancelCommand { get; }
 
@@ -25,6 +30,8 @@ namespace CostsViewer.ViewModels
             
             ResetToDefaultCommand = new RelayCommand(_ => ResetToDefault());
             ApplyInflationCommand = new RelayCommand(_ => ApplyInflation());
+            ImportFromExcelCommand = new RelayCommand(_ => ImportFromExcel());
+            ExportTemplateCommand = new RelayCommand(_ => ExportTemplate());
             OkCommand = new RelayCommand(_ => { DialogResult = true; CloseRequested?.Invoke(); });
             CancelCommand = new RelayCommand(_ => { DialogResult = false; CloseRequested?.Invoke(); });
         }
@@ -71,6 +78,72 @@ namespace CostsViewer.ViewModels
             {
                 var yearsFromBase = factor.Year - baseYear;
                 factor.Factor = Math.Pow(1 + inflationRate, yearsFromBase);
+            }
+        }
+
+        private void ImportFromExcel()
+        {
+            try
+            {
+                var openFileDialog = new OpenFileDialog
+                {
+                    Title = "Import Correction Factors from Excel",
+                    Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                    FilterIndex = 1
+                };
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    var importedSettings = CorrectionFactorService.ImportFromExcel(openFileDialog.FileName);
+                    LoadFromSettings(importedSettings);
+                    
+                    MessageBox.Show(
+                        $"Successfully imported {importedSettings.YearFactors.Count} correction factors from Excel file.",
+                        "Import Successful",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error importing correction factors:\n\n{ex.Message}",
+                    "Import Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void ExportTemplate()
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Title = "Export Correction Factors Template",
+                    Filter = "Excel files (*.xlsx)|*.xlsx",
+                    FilterIndex = 1,
+                    FileName = "CorrectionFactors_Template.xlsx"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    CorrectionFactorService.CreateExcelTemplate(saveFileDialog.FileName);
+                    
+                    MessageBox.Show(
+                        $"Excel template created successfully:\n{saveFileDialog.FileName}",
+                        "Template Created",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error creating Excel template:\n\n{ex.Message}",
+                    "Export Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 

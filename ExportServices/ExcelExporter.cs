@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ClosedXML.Excel;
 using CostsViewer.Models;
 using CostsViewer.Services;
@@ -10,12 +9,24 @@ namespace CostsViewer.ExportServices
 {
     public static class ExcelExporter
     {
+        private static string GetExportFolderPath()
+        {
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            var exportFolder = Path.Combine(desktop, "Costs_App_Export_Files");
+            
+            if (!Directory.Exists(exportFolder))
+            {
+                Directory.CreateDirectory(exportFolder);
+            }
+            
+            return exportFolder;
+        }
         public static void Export(List<ProjectRecord> records, List<CostGroupSummary> costGroupSummary)
         {
             if (records.Count == 0) return;
 
-            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            var file = Path.Combine(desktop, $"Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.xlsx");
+            var exportFolder = GetExportFolderPath();
+            var file = Path.Combine(exportFolder, $"Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.xlsx");
 
             // Load correction factor settings
             var correctionFactorSettings = CorrectionFactorService.LoadSettings();
@@ -151,40 +162,7 @@ namespace CostsViewer.ExportServices
 
             wb.SaveAs(file);
 
-            // Also export as CSV for consistency with import format
-            ExportCsv(records);
         }
 
-        public static void ExportCsv(List<ProjectRecord> records)
-        {
-            if (records.Count == 0) return;
-
-            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            var file = Path.Combine(desktop, $"CSV_Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.csv");
-
-            // Load correction factor settings
-            var correctionFactorSettings = CorrectionFactorService.LoadSettings();
-
-            var csv = new StringBuilder();
-
-            // Add header row with correction factors
-            csv.AppendLine("Include,Project ID,Title,Types,Area,Correction Factor,KG220 €/sqm,KG230 €/sqm,KG410 €/sqm,KG420 €/sqm,KG434 €/sqm,KG430 €/sqm,KG440 €/sqm,KG450 €/sqm,KG460 €/sqm,KG474 €/sqm,KG475 €/sqm,KG480 €/sqm,KG490 €/sqm,KG550 €/sqm,Year,Corrected KG220,Corrected KG230,Corrected KG410,Corrected KG420,Corrected KG434,Corrected KG430,Corrected KG440,Corrected KG450,Corrected KG460,Corrected KG474,Corrected KG475,Corrected KG480,Corrected KG490,Corrected KG550");
-
-            // Add data rows
-            foreach (var record in records)
-            {
-                var correctionFactor = correctionFactorSettings.GetFactorForYear(record.Year);
-                var typesString = string.Join(", ", record.ProjectTypes);
-                // Wrap types in quotes if it contains commas
-                if (typesString.Contains(','))
-                {
-                    typesString = $"\"{typesString}\"";
-                }
-
-                csv.AppendLine($"{(record.Include ? "TRUE" : "FALSE")},{record.ProjectId},{record.ProjectTitle},{typesString},{record.TotalArea},{correctionFactor:F4},{record.CostPerSqmKG220},{record.CostPerSqmKG230},{record.CostPerSqmKG410},{record.CostPerSqmKG420},{record.CostPerSqmKG434},{record.CostPerSqmKG430},{record.CostPerSqmKG440},{record.CostPerSqmKG450},{record.CostPerSqmKG460},{record.CostPerSqmKG474},{record.CostPerSqmKG475},{record.CostPerSqmKG480},{record.CostPerSqmKG490},{record.CostPerSqmKG550},{record.Year},{Math.Round(record.CostPerSqmKG220 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG230 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG410 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG420 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG434 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG430 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG440 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG450 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG460 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG474 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG475 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG480 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG490 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG550 * correctionFactor, 0)}");
-            }
-
-            File.WriteAllText(file, csv.ToString(), Encoding.UTF8);
-        }
     }
 }
