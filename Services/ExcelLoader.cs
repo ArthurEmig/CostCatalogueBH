@@ -36,38 +36,39 @@ namespace CostsViewer.Services
                     var rec = new ProjectRecord
                     {
                         // Column mapping to match Excel export format:
-                        // Include, Project ID, Title, Types, Area, KG220, KG230, KG410, KG420, KG434, KG430, KG440, KG450, KG460, KG474, KG475, KG480, KG490, KG550
-                        Include = ParseBooleanField(row.Cell(1).GetString()),     // Column A: Include
-                        ProjectId = row.Cell(2).GetString(),                      // Column B: Project ID
-                        ProjectTitle = row.Cell(3).GetString(),                   // Column C: Title
-                        ProjectTypes = ParseTypes(row.Cell(4).GetString()),       // Column D: Types
-                        TotalArea = ParseIntField(row.Cell(5).GetString()),       // Column E: Area
-                        CostPerSqmKG220 = ParseIntField(row.Cell(7).GetString()), // Column F: KG220
-                        CostPerSqmKG230 = ParseIntField(row.Cell(8).GetString()), // Column G: KG230
-                        CostPerSqmKG410 = ParseIntField(row.Cell(9).GetString()), // Column H: KG410
-                        CostPerSqmKG420 = ParseIntField(row.Cell(10).GetString()), // Column I: KG420
-                        CostPerSqmKG434 = ParseIntField(row.Cell(11).GetString()),// Column J: KG434
-                        CostPerSqmKG430 = ParseIntField(row.Cell(12).GetString()),// Column K: KG430
-                        CostPerSqmKG440 = ParseIntField(row.Cell(13).GetString()),// Column L: KG440
-                        CostPerSqmKG450 = ParseIntField(row.Cell(14).GetString()),// Column M: KG450
-                        CostPerSqmKG460 = ParseIntField(row.Cell(15).GetString()),// Column N: KG460
-                        CostPerSqmKG474 = ParseIntField(row.Cell(16).GetString()),// Column O: KG474
-                        CostPerSqmKG475 = ParseIntField(row.Cell(17).GetString()),// Column P: KG475
-                        CostPerSqmKG480 = ParseIntField(row.Cell(18).GetString()),// Column Q: KG480
-                        CostPerSqmKG490 = GetByHeaderOrIndex(row, headerRow, "KG490 €/sqm", 19),
-                        CostPerSqmKG550 = GetByHeaderOrIndex(row, headerRow, "KG550 €/sqm", 20, 19),
+                        // Include, Project ID, Title, Types, Area, Correction Factor, KG220, KG230, KG410, KG420, KG434, KG430, KG440, KG450, KG460, KG474, KG475, KG480, KG490, KG550, Year, Corrected...
+                        Include = ParseBooleanField(row.Cell(1).GetString()),     // Column 1: Include
+                        ProjectId = row.Cell(2).GetString(),                      // Column 2: Project ID
+                        ProjectTitle = row.Cell(3).GetString(),                   // Column 3: Title
+                        ProjectTypes = ParseTypes(row.Cell(4).GetString()),       // Column 4: Types
+                        TotalArea = ParseIntField(row.Cell(5).GetString()),       // Column 5: Area
+                        // Column 6 is Correction Factor - skip for import
+                        CostPerSqmKG220 = ParseIntField(row.Cell(7).GetString()), // Column 7: KG220
+                        CostPerSqmKG230 = ParseIntField(row.Cell(8).GetString()), // Column 8: KG230
+                        CostPerSqmKG410 = ParseIntField(row.Cell(9).GetString()), // Column 9: KG410
+                        CostPerSqmKG420 = ParseIntField(row.Cell(10).GetString()),// Column 10: KG420
+                        CostPerSqmKG434 = ParseIntField(row.Cell(11).GetString()),// Column 11: KG434
+                        CostPerSqmKG430 = ParseIntField(row.Cell(12).GetString()),// Column 12: KG430
+                        CostPerSqmKG440 = ParseIntField(row.Cell(13).GetString()),// Column 13: KG440
+                        CostPerSqmKG450 = ParseIntField(row.Cell(14).GetString()),// Column 14: KG450
+                        CostPerSqmKG460 = ParseIntField(row.Cell(15).GetString()),// Column 15: KG460
+                        CostPerSqmKG474 = ParseIntField(row.Cell(16).GetString()),// Column 16: KG474
+                        CostPerSqmKG475 = ParseIntField(row.Cell(17).GetString()),// Column 17: KG475
+                        CostPerSqmKG480 = ParseIntField(row.Cell(18).GetString()),// Column 18: KG480
+                        CostPerSqmKG490 = ParseIntField(row.Cell(19).GetString()),// Column 19: KG490
+                        CostPerSqmKG550 = ParseIntField(row.Cell(20).GetString()),// Column 20: KG550
                     };
-                    // Optional Year column at the end (Column 19 / S) or by header name
+                    // Year column is at position 21 in the new export format
                     try
                     {
                         int year = 0;
-                        // Try by position first if there are more than 19 columns
-                        if (row.Cell(35) != null && !row.Cell(35).IsEmpty())
+                        // Try by position first - Year is now in column 21
+                        if (row.Cell(21) != null && !row.Cell(21).IsEmpty())
                         {
-                            year = ParseIntField(row.Cell(35).GetString());
+                            year = ParseIntField(row.Cell(21).GetString());
                         }
 
-                        // If still zero, try header lookup
+                        // If still zero, try header lookup for backward compatibility
                         if (year == 0)
                         {
                             int lastCell = headerRow.LastCellUsed().Address.ColumnNumber;
