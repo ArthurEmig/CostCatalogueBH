@@ -11,6 +11,8 @@ using System.Windows.Input;
 using CostsViewer.Models;
 using CostsViewer.Services;
 using CostsViewer.ExportServices;
+using CostsViewer.Views;
+using CostsViewer.ViewModels;
 
 namespace CostsViewer.ViewModels
 {
@@ -76,6 +78,9 @@ namespace CostsViewer.ViewModels
         public ICommand ExcludeMatchesCommand { get; }
         public ICommand ExportExcelCommand { get; }
         public ICommand ExportPdfCommand { get; }
+        public ICommand CorrectionFactorSettingsCommand { get; }
+
+        private CorrectionFactorSettings _correctionFactorSettings;
 
         public MainViewModel()
         {
@@ -93,6 +98,10 @@ namespace CostsViewer.ViewModels
                 Console.WriteLine("MainViewModel: SelectedProjectTypes change handler attached");
             }
 
+            // Load correction factor settings
+            _correctionFactorSettings = CorrectionFactorService.LoadSettings();
+            Console.WriteLine("MainViewModel: Correction factor settings loaded");
+
             LoadFileCommand = new RelayCommand(_ => LoadFile());
             ApplyFilterCommand = new RelayCommand(_ => RefreshView());
             ResetFilterCommand = new RelayCommand(_ => ResetFilters());
@@ -100,6 +109,7 @@ namespace CostsViewer.ViewModels
             ExcludeMatchesCommand = new RelayCommand(_ => SetIncludeForMatches(false));
             ExportExcelCommand = new RelayCommand(_ => ExportExcel());
             ExportPdfCommand = new RelayCommand(_ => ExportPdf());
+            CorrectionFactorSettingsCommand = new RelayCommand(_ => OpenCorrectionFactorSettings());
             Console.WriteLine("MainViewModel: All commands initialized");
             Console.WriteLine("=== MainViewModel: Constructor completed ===");
         }
@@ -503,6 +513,49 @@ namespace CostsViewer.ViewModels
         private double _stdDevKG550;
         public double StdDevKG550 { get => _stdDevKG550; private set { _stdDevKG550 = value; OnPropertyChanged(); } }
 
+        // Corrected Average values (after applying correction factors)
+        private double _correctedAverageKG220;
+        public double CorrectedAverageKG220 { get => _correctedAverageKG220; private set { _correctedAverageKG220 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG230;
+        public double CorrectedAverageKG230 { get => _correctedAverageKG230; private set { _correctedAverageKG230 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG410;
+        public double CorrectedAverageKG410 { get => _correctedAverageKG410; private set { _correctedAverageKG410 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG420;
+        public double CorrectedAverageKG420 { get => _correctedAverageKG420; private set { _correctedAverageKG420 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG434;
+        public double CorrectedAverageKG434 { get => _correctedAverageKG434; private set { _correctedAverageKG434 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG430;
+        public double CorrectedAverageKG430 { get => _correctedAverageKG430; private set { _correctedAverageKG430 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG440;
+        public double CorrectedAverageKG440 { get => _correctedAverageKG440; private set { _correctedAverageKG440 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG450;
+        public double CorrectedAverageKG450 { get => _correctedAverageKG450; private set { _correctedAverageKG450 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG460;
+        public double CorrectedAverageKG460 { get => _correctedAverageKG460; private set { _correctedAverageKG460 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG490;
+        public double CorrectedAverageKG490 { get => _correctedAverageKG490; private set { _correctedAverageKG490 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG474;
+        public double CorrectedAverageKG474 { get => _correctedAverageKG474; private set { _correctedAverageKG474 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG475;
+        public double CorrectedAverageKG475 { get => _correctedAverageKG475; private set { _correctedAverageKG475 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG480;
+        public double CorrectedAverageKG480 { get => _correctedAverageKG480; private set { _correctedAverageKG480 = value; OnPropertyChanged(); } }
+        
+        private double _correctedAverageKG550;
+        public double CorrectedAverageKG550 { get => _correctedAverageKG550; private set { _correctedAverageKG550 = value; OnPropertyChanged(); } }
+
         private void UpdateAverages()
         {
             Console.WriteLine("=== UpdateAverages: Starting calculation ===");
@@ -591,12 +644,63 @@ namespace CostsViewer.ViewModels
                 StdDevKG550 = CalculateStandardDeviation(list.Where(p => p.CostPerSqmKG550 > 0).Select(p => (double)p.CostPerSqmKG550).ToList(), list.Where(p => p.CostPerSqmKG550 > 0).DefaultIfEmpty().Average(p => p?.CostPerSqmKG550 ?? 0));
 
                 Console.WriteLine($"UpdateAverages: Calculated - Area: {AverageArea:F2}, KG220: Avg={AverageKG220:F2}, Min={MinKG220:F2}, Max={MaxKG220:F2}, StdDev={StdDevKG220:F2}");
+                
+                // Calculate corrected averages by applying correction factors based on project years
+                CalculateCorrectedAverages(list);
             }
 
             // Property change notifications are now handled automatically by the property setters
 
             UpdateCostGroupSummary();
             Console.WriteLine("UpdateAverages: Completed calculation and property notifications");
+        }
+
+        private void CalculateCorrectedAverages(List<ProjectRecord> projects)
+        {
+            if (projects.Count == 0)
+            {
+                CorrectedAverageKG220 = CorrectedAverageKG230 = CorrectedAverageKG410 = CorrectedAverageKG420 = CorrectedAverageKG434 = CorrectedAverageKG430 = CorrectedAverageKG440 = CorrectedAverageKG450 = CorrectedAverageKG460 = CorrectedAverageKG474 = CorrectedAverageKG475 = CorrectedAverageKG480 = CorrectedAverageKG490 = CorrectedAverageKG550 = 0;
+                return;
+            }
+
+            // Apply correction factors to each project's costs based on its year
+            var correctedProjects = projects.Select(p => new
+            {
+                Project = p,
+                Factor = _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG220 = p.CostPerSqmKG220 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG230 = p.CostPerSqmKG230 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG410 = p.CostPerSqmKG410 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG420 = p.CostPerSqmKG420 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG434 = p.CostPerSqmKG434 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG430 = p.CostPerSqmKG430 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG440 = p.CostPerSqmKG440 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG450 = p.CostPerSqmKG450 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG460 = p.CostPerSqmKG460 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG474 = p.CostPerSqmKG474 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG475 = p.CostPerSqmKG475 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG480 = p.CostPerSqmKG480 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG490 = p.CostPerSqmKG490 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG550 = p.CostPerSqmKG550 * _correctionFactorSettings.GetFactorForYear(p.Year)
+            }).ToList();
+
+            // Calculate averages of corrected values
+            CorrectedAverageKG220 = correctedProjects.Average(cp => cp.CorrectedKG220);
+            CorrectedAverageKG230 = correctedProjects.Average(cp => cp.CorrectedKG230);
+            CorrectedAverageKG410 = correctedProjects.Average(cp => cp.CorrectedKG410);
+            CorrectedAverageKG420 = correctedProjects.Average(cp => cp.CorrectedKG420);
+            CorrectedAverageKG434 = correctedProjects.Average(cp => cp.CorrectedKG434);
+            CorrectedAverageKG430 = correctedProjects.Average(cp => cp.CorrectedKG430);
+            CorrectedAverageKG440 = correctedProjects.Average(cp => cp.CorrectedKG440);
+            CorrectedAverageKG450 = correctedProjects.Average(cp => cp.CorrectedKG450);
+            CorrectedAverageKG460 = correctedProjects.Average(cp => cp.CorrectedKG460);
+            CorrectedAverageKG474 = correctedProjects.Average(cp => cp.CorrectedKG474);
+            CorrectedAverageKG475 = correctedProjects.Average(cp => cp.CorrectedKG475);
+            CorrectedAverageKG480 = correctedProjects.Average(cp => cp.CorrectedKG480);
+            CorrectedAverageKG490 = correctedProjects.Average(cp => cp.CorrectedKG490);
+            CorrectedAverageKG550 = correctedProjects.Average(cp => cp.CorrectedKG550);
+
+            Console.WriteLine($"CalculateCorrectedAverages: Corrected KG220: {CorrectedAverageKG220:F2} (Original: {AverageKG220:F2})");
         }
 
         private void UpdateCostGroupSummary()
@@ -728,6 +832,32 @@ namespace CostsViewer.ViewModels
             catch (Exception ex)
             {
                 Console.WriteLine($"ExportPdf: ERROR - {ex.Message}");
+            }
+        }
+
+        private void OpenCorrectionFactorSettings()
+        {
+            try
+            {
+                var settingsViewModel = new CorrectionFactorSettingsViewModel(_correctionFactorSettings);
+                var settingsWindow = new CorrectionFactorSettingsWindow(settingsViewModel);
+                
+                settingsViewModel.CloseRequested += () => settingsWindow.Close();
+                
+                if (settingsWindow.ShowDialog() == true || settingsViewModel.DialogResult)
+                {
+                    _correctionFactorSettings = settingsViewModel.GetSettings();
+                    CorrectionFactorService.SaveSettings(_correctionFactorSettings);
+                    
+                    // Recalculate averages with new correction factors
+                    UpdateAverages();
+                    
+                    Console.WriteLine("CorrectionFactorSettings: Settings updated and saved");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"OpenCorrectionFactorSettings: ERROR - {ex.Message}");
             }
         }
 

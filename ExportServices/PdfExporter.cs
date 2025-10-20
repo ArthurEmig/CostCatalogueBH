@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using CostsViewer.Models;
+using CostsViewer.Services;
 using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using PdfSharp;
@@ -20,6 +21,9 @@ namespace CostsViewer.ExportServices
 
                 var desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                 var file = Path.Combine(desktop, $"Costs_Export_{DateTime.Now:yyyyMMdd_HHmm}.pdf");
+
+                // Load correction factor settings
+                var correctionFactorSettings = CorrectionFactorService.LoadSettings();
 
                 using var doc = new PdfDocument();
                 var page = doc.AddPage();
@@ -106,6 +110,44 @@ namespace CostsViewer.ExportServices
 
             y += 20;
 
+                // Correction Factors section
+                gfx.DrawString("Correction Factors Applied:", sectionFont, XBrushes.Black, new XPoint(40, y));
+                y += 22;
+                
+                var currentYear = DateTime.Now.Year;
+                var yearCount = 0;
+                for (int year = 1999; year <= currentYear; year++)
+                {
+                    var factor = correctionFactorSettings.GetFactorForYear(year);
+                    if (Math.Abs(factor - 1.0) > 0.0001) // Only show non-default factors
+                    {
+                        gfx.DrawString($"Year {year}: {factor:F4} ({factor * 100:F2}%)", font, XBrushes.Black, new XPoint(40, y));
+                        y += 16;
+                        yearCount++;
+                        
+                        if (yearCount % 3 == 0) // Show 3 per line to save space
+                        {
+                            y += 4;
+                        }
+                        
+                        if (y > page.Height - 80)
+                        {
+                            page = doc.AddPage();
+                            page.Orientation = PageOrientation.Landscape;
+                            gfx = XGraphics.FromPdfPage(page);
+                            y = 40;
+                        }
+                    }
+                }
+                
+                if (yearCount == 0)
+                {
+                    gfx.DrawString("All correction factors are set to 1.0 (no correction applied)", font, XBrushes.Gray, new XPoint(40, y));
+                    y += 16;
+                }
+                
+                y += 20;
+
                 // Legacy averages section for backward compatibility
                 string[] labels = {
                     "KG220 (Site Prep)",
@@ -144,8 +186,9 @@ namespace CostsViewer.ExportServices
                 y += 22;
                 foreach (var p in records)
                 {
-                    // No truncation needed in landscape - show full information
-                    var line = $"{(p.Include ? "[x]" : "[ ]")} {p.ProjectId} | {p.ProjectTitle} | {string.Join(", ", p.ProjectTypes)} | {p.TotalArea} sqm";
+                    var correctionFactor = correctionFactorSettings.GetFactorForYear(p.Year);
+                    // No truncation needed in landscape - show full information including correction factor
+                    var line = $"{(p.Include ? "[x]" : "[ ]")} {p.ProjectId} | {p.ProjectTitle} | {string.Join(", ", p.ProjectTypes)} | {p.TotalArea} sqm | Year: {p.Year} | Factor: {correctionFactor:F4}";
                     gfx.DrawString(line, font, XBrushes.Black, new XPoint(40, y));
                     y += 16;
                     if (y > page.Height - 40)

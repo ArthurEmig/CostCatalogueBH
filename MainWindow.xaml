@@ -28,6 +28,8 @@
             <Separator/>
             <Button Content="Export Excel" Command="{Binding ExportExcelCommand}" Margin="8,0,0,0"/>
             <Button Content="Export PDF" Command="{Binding ExportPdfCommand}" Margin="4,0,0,0"/>
+            <Separator/>
+            <Button Content="Correction Factors" Command="{Binding CorrectionFactorSettingsCommand}" Margin="8,0,0,0"/>
         </ToolBar>
 
         <Grid>
@@ -118,6 +120,8 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <!-- Cost Group Headers -->
@@ -143,6 +147,8 @@
                                 <TextBlock Grid.Column="4" Grid.Row="3" Text="Min:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2"/>
                                 <TextBlock Grid.Column="4" Grid.Row="4" Text="Max:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2"/>
                                 <TextBlock Grid.Column="4" Grid.Row="5" Text="Std Dev:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2"/>
+                                <TextBlock Grid.Column="4" Grid.Row="6" Text="Corrected Avg:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2" Foreground="Blue"/>
+                                <TextBlock Grid.Column="4" Grid.Row="7" Text="Difference:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2" Foreground="Green"/>
 
                                 <!-- Count row -->
                                 <TextBlock Grid.Column="5" Grid.Row="1" Text="{Binding IncludedCount}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Count of included projects"/>
@@ -235,17 +241,33 @@
                                 <TextBlock Grid.Column="17" Grid.Row="5" Text="{Binding StdDevKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG480"/>
                                 <TextBlock Grid.Column="18" Grid.Row="5" Text="{Binding StdDevKG490, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG490"/>
                                 <TextBlock Grid.Column="19" Grid.Row="5" Text="{Binding StdDevKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Std Dev KG550"/>
+
+                                <!-- Corrected Average row for all cost groups -->
+                                <TextBlock Grid.Column="6" Grid.Row="6" Text="{Binding CorrectedAverageKG220, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG220" Foreground="Blue"/>
+                                <TextBlock Grid.Column="7" Grid.Row="6" Text="{Binding CorrectedAverageKG230, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG230" Foreground="Blue"/>
+                                <TextBlock Grid.Column="8" Grid.Row="6" Text="{Binding CorrectedAverageKG410, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG410" Foreground="Blue"/>
+                                <TextBlock Grid.Column="9" Grid.Row="6" Text="{Binding CorrectedAverageKG420, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG420" Foreground="Blue"/>
+                                <TextBlock Grid.Column="10" Grid.Row="6" Text="{Binding CorrectedAverageKG430, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG430" Foreground="Blue"/>
+                                <TextBlock Grid.Column="11" Grid.Row="6" Text="{Binding CorrectedAverageKG434, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG434" Foreground="Blue"/>
+                                <TextBlock Grid.Column="12" Grid.Row="6" Text="{Binding CorrectedAverageKG440, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG440" Foreground="Blue"/>
+                                <TextBlock Grid.Column="13" Grid.Row="6" Text="{Binding CorrectedAverageKG450, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG450" Foreground="Blue"/>
+                                <TextBlock Grid.Column="14" Grid.Row="6" Text="{Binding CorrectedAverageKG460, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG460" Foreground="Blue"/>
+                                <TextBlock Grid.Column="15" Grid.Row="6" Text="{Binding CorrectedAverageKG474, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG474" Foreground="Blue"/>
+                                <TextBlock Grid.Column="16" Grid.Row="6" Text="{Binding CorrectedAverageKG475, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG475" Foreground="Blue"/>
+                                <TextBlock Grid.Column="17" Grid.Row="6" Text="{Binding CorrectedAverageKG480, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG480" Foreground="Blue"/>
+                                <TextBlock Grid.Column="18" Grid.Row="6" Text="{Binding CorrectedAverageKG490, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG490" Foreground="Blue"/>
+                                <TextBlock Grid.Column="19" Grid.Row="6" Text="{Binding CorrectedAverageKG550, StringFormat={}{0:F0}}" HorizontalAlignment="Center" Margin="2" Background="LightBlue" ToolTip="Corrected Average KG550" Foreground="Blue"/>
                             </Grid>
                         </StackPanel>
                     </Border>
                 </Grid>
             </ScrollViewer>
 
-            <!-- Right panel with only Averages tab -->
+            <!-- Right panel with Averages and Corrected tabs -->
             <TabControl Grid.Column="1" Margin="8">
-                <TabItem Header="Averages">
+                <TabItem Header="Original Averages">
                     <StackPanel Orientation="Vertical" Margin="8">
-                        <TextBlock Text="Included Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
+                        <TextBlock Text="Original Included Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,8"/>
                         <UniformGrid Columns="2" Margin="0,0,0,8">
                             <TextBlock Text="Count:"/>
                             <TextBlock Text="{Binding IncludedCount}"/>
@@ -279,6 +301,46 @@
                             <TextBlock Text="{Binding AverageKG490, StringFormat={}{0:F0}}"/>
                             <TextBlock Text="KG550 €/sqm:"/>
                             <TextBlock Text="{Binding AverageKG550, StringFormat={}{0:F0}}"/>
+                        </UniformGrid>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Corrected Averages">
+                    <StackPanel Orientation="Vertical" Margin="8">
+                        <TextBlock Text="Corrected Included Averages" FontWeight="Bold" FontSize="16" Margin="0,0,0,8" Foreground="Blue"/>
+                        <TextBlock Text="(After applying correction factors)" FontSize="12" Margin="0,0,0,8" Foreground="Gray"/>
+                        <UniformGrid Columns="2" Margin="0,0,0,8">
+                            <TextBlock Text="Count:"/>
+                            <TextBlock Text="{Binding IncludedCount}"/>
+                            <TextBlock Text="Area Avg:"/>
+                            <TextBlock Text="{Binding AverageArea, StringFormat={}{0:F0}}"/>
+                            <TextBlock Text="KG220 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG220, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG230 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG230, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG410 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG410, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG420 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG420, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG430 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG430, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG434 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG434, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG440 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG440, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG450 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG450, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG460 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG460, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG474 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG474, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG475 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG475, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG480 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG480, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG490 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG490, StringFormat={}{0:F0}}" Foreground="Blue"/>
+                            <TextBlock Text="KG550 €/sqm:" Foreground="Blue"/>
+                            <TextBlock Text="{Binding CorrectedAverageKG550, StringFormat={}{0:F0}}" Foreground="Blue"/>
                         </UniformGrid>
                     </StackPanel>
                 </TabItem>
