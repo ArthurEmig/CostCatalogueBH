@@ -741,18 +741,18 @@ namespace CostsViewer.ViewModels
             // Define cost groups with descriptions according to DIN 276 - now using corrected values
             var costGroups = new[]
             {
-                new { Code = "KG220", Description = "Site Clearance & Preparation", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG220) },
-                new { Code = "KG230", Description = "Earthworks & Foundations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG230) },
-                new { Code = "KG410", Description = "Sewage, Water & Gas Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG410) },
+                new { Code = "KG220", Description = "Public Infrastructure", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG220) },
+                new { Code = "KG230", Description = "Private Infrastructure", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG230) },
+                new { Code = "KG410", Description = "Wastewater, Water, and Gas Installations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG410) },
                 new { Code = "KG420", Description = "Heating Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG420) },
                 new { Code = "KG430", Description = "Ventilation & Air Conditioning", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG430) },
-                new { Code = "KG434", Description = "Process-Specific Installations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG434) },
+                new { Code = "KG434", Description = "Cooling", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG434) },
                 new { Code = "KG440", Description = "Electrical Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG440) },
-                new { Code = "KG450", Description = "Communication & Safety Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG450) },
+                new { Code = "KG450", Description = "Communication and Information Technology Installations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG450) },
                 new { Code = "KG460", Description = "Conveying Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG460) },
                 new { Code = "KG490", Description = "Other Technical Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG490) },
-                new { Code = "KG474", Description = "Fire Protection Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG474) },
-                new { Code = "KG475", Description = "Security & Access Control", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG475) },
+                new { Code = "KG474", Description = "Fire Extinguishing Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG474) },
+                new { Code = "KG475", Description = "Process Heat, Cooling, and Air Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG475) },
                 new { Code = "KG480", Description = "Building & System Automation", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG480) },
                 new { Code = "KG550", Description = "Outdoor Technical Installations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG550) }
             };

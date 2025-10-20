@@ -15,3 +15,9 @@ Distribution/x86/CostsViewer.exe
 Distribution/x64/CostsViewer.exe
 Distribution/x64/CostsViewer.pdb
 Distribution/x86/CostsViewer.pdb
+Distribution/x86/CostsApp.pdb
+.gitignore
+Distribution/x86/CostsApp.exe
+Distribution/x64/CostsApp.pdb
+Distribution/x64/CostsApp.exe
+.gitignore
