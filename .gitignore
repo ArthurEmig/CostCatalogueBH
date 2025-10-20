@@ -4,3 +4,10 @@
 *temp/*
 *.vs/*
 examples/BHJ_MEP_Kostenberechnung_LP3_Rev.04.xlsx
+Distribution/CostsViewer-x64.exe
+Distribution/CostsViewer-x64.exe
+Distribution/CostsViewer-x86.exe
+publish/CostsViewer.exe
+publish/CostsViewer.pdb
+publish-x86/CostsViewer.exe
+publish-x86/CostsViewer.pdb

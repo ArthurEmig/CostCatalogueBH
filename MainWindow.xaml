@@ -121,7 +121,6 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <!-- Cost Group Headers -->
@@ -148,7 +147,6 @@
                                 <TextBlock Grid.Column="4" Grid.Row="4" Text="Max:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2"/>
                                 <TextBlock Grid.Column="4" Grid.Row="5" Text="Std Dev:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2"/>
                                 <TextBlock Grid.Column="4" Grid.Row="6" Text="Corrected Avg:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2" Foreground="Blue"/>
-                                <TextBlock Grid.Column="4" Grid.Row="7" Text="Difference:" FontWeight="Bold" HorizontalAlignment="Right" Margin="2" Foreground="Green"/>
 
                                 <!-- Count row -->
                                 <TextBlock Grid.Column="5" Grid.Row="1" Text="{Binding IncludedCount}" HorizontalAlignment="Center" Margin="2" Background="Transparent" ToolTip="Count of included projects"/>

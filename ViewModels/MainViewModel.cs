@@ -717,28 +717,49 @@ namespace CostsViewer.ViewModels
                 return;
             }
 
-            // Define cost groups with descriptions according to DIN 276
+            // Apply correction factors to get corrected values for each project
+            var correctedProjects = includedItems.Select(p => new
+            {
+                Project = p,
+                Factor = _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG220 = p.CostPerSqmKG220 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG230 = p.CostPerSqmKG230 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG410 = p.CostPerSqmKG410 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG420 = p.CostPerSqmKG420 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG434 = p.CostPerSqmKG434 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG430 = p.CostPerSqmKG430 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG440 = p.CostPerSqmKG440 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG450 = p.CostPerSqmKG450 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG460 = p.CostPerSqmKG460 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG474 = p.CostPerSqmKG474 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG475 = p.CostPerSqmKG475 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG480 = p.CostPerSqmKG480 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG490 = p.CostPerSqmKG490 * _correctionFactorSettings.GetFactorForYear(p.Year),
+                CorrectedKG550 = p.CostPerSqmKG550 * _correctionFactorSettings.GetFactorForYear(p.Year)
+            }).ToList();
+
+            // Define cost groups with descriptions according to DIN 276 - now using corrected values
             var costGroups = new[]
             {
-                new { Code = "KG220", Description = "Site Clearance & Preparation", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG220) },
-                new { Code = "KG230", Description = "Earthworks & Foundations", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG230) },
-                new { Code = "KG410", Description = "Sewage, Water & Gas Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG410) },
-                new { Code = "KG420", Description = "Heating Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG420) },
-                new { Code = "KG430", Description = "Ventilation & Air Conditioning", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG430) },
-                new { Code = "KG434", Description = "Process-Specific Installations", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG434) },
-                new { Code = "KG440", Description = "Electrical Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG440) },
-                new { Code = "KG450", Description = "Communication & Safety Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG450) },
-                new { Code = "KG460", Description = "Conveying Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG460) },
-                new { Code = "KG490", Description = "Other Technical Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG490) },
-                new { Code = "KG474", Description = "Fire Protection Systems", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG474) },
-                new { Code = "KG475", Description = "Security & Access Control", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG475) },
-                new { Code = "KG480", Description = "Building & System Automation", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG480) },
-                new { Code = "KG550", Description = "Outdoor Technical Installations", GetValue = (Func<ProjectRecord, double>)(p => p.CostPerSqmKG550) }
+                new { Code = "KG220", Description = "Site Clearance & Preparation", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG220) },
+                new { Code = "KG230", Description = "Earthworks & Foundations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG230) },
+                new { Code = "KG410", Description = "Sewage, Water & Gas Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG410) },
+                new { Code = "KG420", Description = "Heating Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG420) },
+                new { Code = "KG430", Description = "Ventilation & Air Conditioning", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG430) },
+                new { Code = "KG434", Description = "Process-Specific Installations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG434) },
+                new { Code = "KG440", Description = "Electrical Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG440) },
+                new { Code = "KG450", Description = "Communication & Safety Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG450) },
+                new { Code = "KG460", Description = "Conveying Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG460) },
+                new { Code = "KG490", Description = "Other Technical Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG490) },
+                new { Code = "KG474", Description = "Fire Protection Systems", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG474) },
+                new { Code = "KG475", Description = "Security & Access Control", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG475) },
+                new { Code = "KG480", Description = "Building & System Automation", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG480) },
+                new { Code = "KG550", Description = "Outdoor Technical Installations", GetValue = (Func<dynamic, double>)(cp => cp.CorrectedKG550) }
             };
 
             foreach (var costGroup in costGroups)
             {
-                var values = includedItems.Select(costGroup.GetValue).Where(v => v > 0).ToList();
+                var values = correctedProjects.Select(costGroup.GetValue).Where(v => v > 0).ToList();
 
                 if (values.Count > 0)
                 {
@@ -758,7 +779,7 @@ namespace CostsViewer.ViewModels
                     };
 
                     CostGroupSummary.Add(summary);
-                    Console.WriteLine($"UpdateCostGroupSummary: {costGroup.Code} - Avg: {average:F2}, Min: {min:F2}, Max: {max:F2}, StdDev: {standardDeviation:F2}");
+                    Console.WriteLine($"UpdateCostGroupSummary: {costGroup.Code} - Corrected Avg: {average:F2}, Min: {min:F2}, Max: {max:F2}, StdDev: {standardDeviation:F2}");
                 }
                 else
                 {
@@ -766,7 +787,7 @@ namespace CostsViewer.ViewModels
                 }
             }
 
-            Console.WriteLine($"UpdateCostGroupSummary: Created {CostGroupSummary.Count} cost group summaries");
+            Console.WriteLine($"UpdateCostGroupSummary: Created {CostGroupSummary.Count} cost group summaries with corrected values");
         }
 
         private static double CalculateStandardDeviation(List<double> values, double mean)

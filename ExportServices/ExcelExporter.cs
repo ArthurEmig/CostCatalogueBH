@@ -64,20 +64,20 @@ namespace CostsViewer.ExportServices
                 projectsWs.Cell(r,21).Value = p.Year;
                 
                 // Corrected values
-                projectsWs.Cell(r,22).Value = Math.Round(p.CostPerSqmKG220 * correctionFactor, 2);
-                projectsWs.Cell(r,23).Value = Math.Round(p.CostPerSqmKG230 * correctionFactor, 2);
-                projectsWs.Cell(r,24).Value = Math.Round(p.CostPerSqmKG410 * correctionFactor, 2);
-                projectsWs.Cell(r,25).Value = Math.Round(p.CostPerSqmKG420 * correctionFactor, 2);
-                projectsWs.Cell(r,26).Value = Math.Round(p.CostPerSqmKG434 * correctionFactor, 2);
-                projectsWs.Cell(r,27).Value = Math.Round(p.CostPerSqmKG430 * correctionFactor, 2);
-                projectsWs.Cell(r,28).Value = Math.Round(p.CostPerSqmKG440 * correctionFactor, 2);
-                projectsWs.Cell(r,29).Value = Math.Round(p.CostPerSqmKG450 * correctionFactor, 2);
-                projectsWs.Cell(r,30).Value = Math.Round(p.CostPerSqmKG460 * correctionFactor, 2);
-                projectsWs.Cell(r,31).Value = Math.Round(p.CostPerSqmKG474 * correctionFactor, 2);
-                projectsWs.Cell(r,32).Value = Math.Round(p.CostPerSqmKG475 * correctionFactor, 2);
-                projectsWs.Cell(r,33).Value = Math.Round(p.CostPerSqmKG480 * correctionFactor, 2);
-                projectsWs.Cell(r,34).Value = Math.Round(p.CostPerSqmKG490 * correctionFactor, 2);
-                projectsWs.Cell(r,35).Value = Math.Round(p.CostPerSqmKG550 * correctionFactor, 2);
+                projectsWs.Cell(r,22).Value = Math.Round(p.CostPerSqmKG220 * correctionFactor, 0);
+                projectsWs.Cell(r,23).Value = Math.Round(p.CostPerSqmKG230 * correctionFactor, 0);
+                projectsWs.Cell(r,24).Value = Math.Round(p.CostPerSqmKG410 * correctionFactor, 0);
+                projectsWs.Cell(r,25).Value = Math.Round(p.CostPerSqmKG420 * correctionFactor, 0);
+                projectsWs.Cell(r,26).Value = Math.Round(p.CostPerSqmKG434 * correctionFactor, 0);
+                projectsWs.Cell(r,27).Value = Math.Round(p.CostPerSqmKG430 * correctionFactor, 0);
+                projectsWs.Cell(r,28).Value = Math.Round(p.CostPerSqmKG440 * correctionFactor, 0);
+                projectsWs.Cell(r,29).Value = Math.Round(p.CostPerSqmKG450 * correctionFactor, 0);
+                projectsWs.Cell(r,30).Value = Math.Round(p.CostPerSqmKG460 * correctionFactor, 0);
+                projectsWs.Cell(r,31).Value = Math.Round(p.CostPerSqmKG474 * correctionFactor, 0);
+                projectsWs.Cell(r,32).Value = Math.Round(p.CostPerSqmKG475 * correctionFactor, 0);
+                projectsWs.Cell(r,33).Value = Math.Round(p.CostPerSqmKG480 * correctionFactor, 0);
+                projectsWs.Cell(r,34).Value = Math.Round(p.CostPerSqmKG490 * correctionFactor, 0);
+                projectsWs.Cell(r,35).Value = Math.Round(p.CostPerSqmKG550 * correctionFactor, 0);
                 
                 r++;
             }
@@ -102,10 +102,10 @@ namespace CostsViewer.ExportServices
             {
                 summaryWs.Cell(r, 1).Value = summary.CostGroup;
                 summaryWs.Cell(r, 2).Value = summary.Description;
-                summaryWs.Cell(r, 3).Value = Math.Round(summary.AverageCost, 2);
-                summaryWs.Cell(r, 4).Value = Math.Round(summary.MinCost, 2);
-                summaryWs.Cell(r, 5).Value = Math.Round(summary.MaxCost, 2);
-                summaryWs.Cell(r, 6).Value = Math.Round(summary.StandardDeviation, 2);
+                summaryWs.Cell(r, 3).Value = Math.Round(summary.AverageCost, 0);
+                summaryWs.Cell(r, 4).Value = Math.Round(summary.MinCost, 0);
+                summaryWs.Cell(r, 5).Value = Math.Round(summary.MaxCost, 0);
+                summaryWs.Cell(r, 6).Value = Math.Round(summary.StandardDeviation, 0);
                 r++;
             }
 
@@ -181,7 +181,7 @@ namespace CostsViewer.ExportServices
                     typesString = $"\"{typesString}\"";
                 }
 
-                csv.AppendLine($"{(record.Include ? "TRUE" : "FALSE")},{record.ProjectId},{record.ProjectTitle},{typesString},{record.TotalArea},{correctionFactor:F4},{record.CostPerSqmKG220},{record.CostPerSqmKG230},{record.CostPerSqmKG410},{record.CostPerSqmKG420},{record.CostPerSqmKG434},{record.CostPerSqmKG430},{record.CostPerSqmKG440},{record.CostPerSqmKG450},{record.CostPerSqmKG460},{record.CostPerSqmKG474},{record.CostPerSqmKG475},{record.CostPerSqmKG480},{record.CostPerSqmKG490},{record.CostPerSqmKG550},{record.Year},{Math.Round(record.CostPerSqmKG220 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG230 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG410 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG420 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG434 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG430 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG440 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG450 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG460 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG474 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG475 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG480 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG490 * correctionFactor, 2)},{Math.Round(record.CostPerSqmKG550 * correctionFactor, 2)}");
+                csv.AppendLine($"{(record.Include ? "TRUE" : "FALSE")},{record.ProjectId},{record.ProjectTitle},{typesString},{record.TotalArea},{correctionFactor:F4},{record.CostPerSqmKG220},{record.CostPerSqmKG230},{record.CostPerSqmKG410},{record.CostPerSqmKG420},{record.CostPerSqmKG434},{record.CostPerSqmKG430},{record.CostPerSqmKG440},{record.CostPerSqmKG450},{record.CostPerSqmKG460},{record.CostPerSqmKG474},{record.CostPerSqmKG475},{record.CostPerSqmKG480},{record.CostPerSqmKG490},{record.CostPerSqmKG550},{record.Year},{Math.Round(record.CostPerSqmKG220 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG230 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG410 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG420 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG434 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG430 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG440 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG450 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG460 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG474 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG475 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG480 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG490 * correctionFactor, 0)},{Math.Round(record.CostPerSqmKG550 * correctionFactor, 0)}");
             }
 
             File.WriteAllText(file, csv.ToString(), Encoding.UTF8);
