@@ -11,3 +11,7 @@ publish/CostsViewer.exe
 publish/CostsViewer.pdb
 publish-x86/CostsViewer.exe
 publish-x86/CostsViewer.pdb
+Distribution/x86/CostsViewer.exe
+Distribution/x64/CostsViewer.exe
+Distribution/x64/CostsViewer.pdb
+Distribution/x86/CostsViewer.pdb

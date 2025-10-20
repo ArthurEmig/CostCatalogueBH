@@ -93,10 +93,10 @@ namespace CostsViewer.ExportServices
             {
                 gfx.DrawString(summary.CostGroup, font, XBrushes.Black, new XPoint(40, y));
                 gfx.DrawString(summary.Description, font, XBrushes.Black, new XPoint(140, y)); // Full description
-                gfx.DrawString($"{summary.AverageCost:F2}", font, XBrushes.Black, new XPoint(420, y));
-                gfx.DrawString($"{summary.MinCost:F2}", font, XBrushes.Black, new XPoint(520, y));
-                gfx.DrawString($"{summary.MaxCost:F2}", font, XBrushes.Black, new XPoint(620, y));
-                gfx.DrawString($"{summary.StandardDeviation:F2}", font, XBrushes.Black, new XPoint(720, y));
+                gfx.DrawString($"{summary.AverageCost:F0}", font, XBrushes.Black, new XPoint(420, y));
+                gfx.DrawString($"{summary.MinCost:F0}", font, XBrushes.Black, new XPoint(520, y));
+                gfx.DrawString($"{summary.MaxCost:F0}", font, XBrushes.Black, new XPoint(620, y));
+                gfx.DrawString($"{summary.StandardDeviation:F0}", font, XBrushes.Black, new XPoint(720, y));
                 y += 16;
 
                 if (y > page.Height - 80)
@@ -121,7 +121,7 @@ namespace CostsViewer.ExportServices
                     var factor = correctionFactorSettings.GetFactorForYear(year);
                     if (Math.Abs(factor - 1.0) > 0.0001) // Only show non-default factors
                     {
-                        gfx.DrawString($"Year {year}: {factor:F4} ({factor * 100:F2}%)", font, XBrushes.Black, new XPoint(40, y));
+                        gfx.DrawString($"Year {year}: {factor:F4} ({factor * 100:F0}%)", font, XBrushes.Black, new XPoint(40, y));
                         y += 16;
                         yearCount++;
                         
@@ -169,7 +169,7 @@ namespace CostsViewer.ExportServices
             y += 22;
             for (int i = 0; i < Math.Min(labels.Length, avgKgs.Length); i++)
             {
-                gfx.DrawString($"Average {labels[i]}: {avgKgs[i]:F2} €/sqm", font, XBrushes.Black, new XPoint(40, y));
+                gfx.DrawString($"Average {labels[i]}: {avgKgs[i]:F0} €/sqm", font, XBrushes.Black, new XPoint(40, y));
                 y += 18;
 
                 if (y > page.Height - 80)
