@@ -42,29 +42,29 @@ namespace CostsViewer.Services
                         ProjectTitle = row.Cell(3).GetString(),                   // Column C: Title
                         ProjectTypes = ParseTypes(row.Cell(4).GetString()),       // Column D: Types
                         TotalArea = ParseIntField(row.Cell(5).GetString()),       // Column E: Area
-                        CostPerSqmKG220 = ParseIntField(row.Cell(6).GetString()), // Column F: KG220
-                        CostPerSqmKG230 = ParseIntField(row.Cell(7).GetString()), // Column G: KG230
-                        CostPerSqmKG410 = ParseIntField(row.Cell(8).GetString()), // Column H: KG410
-                        CostPerSqmKG420 = ParseIntField(row.Cell(9).GetString()), // Column I: KG420
-                        CostPerSqmKG434 = ParseIntField(row.Cell(10).GetString()),// Column J: KG434
-                        CostPerSqmKG430 = ParseIntField(row.Cell(11).GetString()),// Column K: KG430
-                        CostPerSqmKG440 = ParseIntField(row.Cell(12).GetString()),// Column L: KG440
-                        CostPerSqmKG450 = ParseIntField(row.Cell(13).GetString()),// Column M: KG450
-                        CostPerSqmKG460 = ParseIntField(row.Cell(14).GetString()),// Column N: KG460
-                        CostPerSqmKG474 = ParseIntField(row.Cell(15).GetString()),// Column O: KG474
-                        CostPerSqmKG475 = ParseIntField(row.Cell(16).GetString()),// Column P: KG475
-                        CostPerSqmKG480 = ParseIntField(row.Cell(17).GetString()),// Column Q: KG480
-                        CostPerSqmKG490 = GetByHeaderOrIndex(row, headerRow, "KG490 €/sqm", 18),
-                        CostPerSqmKG550 = GetByHeaderOrIndex(row, headerRow, "KG550 €/sqm", 19, 18),
+                        CostPerSqmKG220 = ParseIntField(row.Cell(7).GetString()), // Column F: KG220
+                        CostPerSqmKG230 = ParseIntField(row.Cell(8).GetString()), // Column G: KG230
+                        CostPerSqmKG410 = ParseIntField(row.Cell(9).GetString()), // Column H: KG410
+                        CostPerSqmKG420 = ParseIntField(row.Cell(10).GetString()), // Column I: KG420
+                        CostPerSqmKG434 = ParseIntField(row.Cell(11).GetString()),// Column J: KG434
+                        CostPerSqmKG430 = ParseIntField(row.Cell(12).GetString()),// Column K: KG430
+                        CostPerSqmKG440 = ParseIntField(row.Cell(13).GetString()),// Column L: KG440
+                        CostPerSqmKG450 = ParseIntField(row.Cell(14).GetString()),// Column M: KG450
+                        CostPerSqmKG460 = ParseIntField(row.Cell(15).GetString()),// Column N: KG460
+                        CostPerSqmKG474 = ParseIntField(row.Cell(16).GetString()),// Column O: KG474
+                        CostPerSqmKG475 = ParseIntField(row.Cell(17).GetString()),// Column P: KG475
+                        CostPerSqmKG480 = ParseIntField(row.Cell(18).GetString()),// Column Q: KG480
+                        CostPerSqmKG490 = GetByHeaderOrIndex(row, headerRow, "KG490 €/sqm", 19),
+                        CostPerSqmKG550 = GetByHeaderOrIndex(row, headerRow, "KG550 €/sqm", 20, 19),
                     };
                     // Optional Year column at the end (Column 19 / S) or by header name
                     try
                     {
                         int year = 0;
                         // Try by position first if there are more than 19 columns
-                        if (row.Cell(20) != null && !row.Cell(20).IsEmpty())
+                        if (row.Cell(35) != null && !row.Cell(35).IsEmpty())
                         {
-                            year = ParseIntField(row.Cell(20).GetString());
+                            year = ParseIntField(row.Cell(35).GetString());
                         }
 
                         // If still zero, try header lookup

@@ -10,7 +10,7 @@ This feature adds correction factors functionality to the CostsViewer applicatio
 - **`CorrectionFactorSettings`**: Container for all correction factors with helper methods
 
 ### 2. Services
-- **`Services/CorrectionFactorService.cs`**: Handles loading and saving correction factors to/from appsettings.json
+- **`Services/CorrectionFactorService.cs`**: Handles in-memory storage of correction factors (no external files needed)
 
 ### 3. Views & ViewModels
 - **`Views/CorrectionFactorSettingsWindow.xaml`**: Settings dialog for managing correction factors
@@ -58,9 +58,11 @@ This feature adds correction factors functionality to the CostsViewer applicatio
   - "Apply Inflation" - applies 2% yearly inflation from 1999
 
 ### 2. Data Persistence
-- Correction factors are saved in `appsettings.json` under "CorrectionFactors" section
+- Correction factors are stored in memory during application runtime
+- Settings are included in Excel exports for documentation
 - Automatic initialization of all years from 1999 to current year
 - Default factor of 1.0 for all years
+- No external configuration files needed for single .exe deployment
 
 ### 3. Visual Indicators
 - **Main UI**: 
@@ -102,10 +104,10 @@ This feature adds correction factors functionality to the CostsViewer applicatio
 ## Technical Implementation
 
 ### Data Flow
-1. Correction factors loaded from appsettings.json on startup
+1. Correction factors initialized with default values on startup
 2. Factors applied during average calculations in MainViewModel
 3. UI updates automatically via data binding
-4. Export services load factors independently for consistency
+4. Export services access the same in-memory factors for consistency
 
 ### Error Handling
 - Graceful fallback to default factors if loading fails
@@ -117,19 +119,12 @@ This feature adds correction factors functionality to the CostsViewer applicatio
 - Calculations performed only when data changes
 - Efficient year-based lookup using Dictionary
 
-## Configuration Example
+## Single .exe Deployment
 
-```json
-{
-  "CorrectionFactors": {
-    "YearFactors": {
-      "1999": 1.0,
-      "2000": 1.02,
-      "2001": 1.0404,
-      "2024": 1.6084
-    }
-  }
-}
-```
+This implementation is designed for single .exe deployment:
+- No external configuration files required
+- Correction factors stored in memory during runtime
+- Settings preserved in Excel exports for documentation
+- All functionality works without any external dependencies
 
-This implementation provides a comprehensive correction factors system that integrates seamlessly with the existing CostsViewer functionality while maintaining data integrity and user experience.
+This provides a comprehensive correction factors system that integrates seamlessly with the existing CostsViewer functionality while maintaining data integrity and user experience, perfect for standalone executable distribution.
